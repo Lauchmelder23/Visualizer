@@ -5,13 +5,21 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("Visualizer")
 
-find_package(glfw3)
+find_package(GLFW3)
 if(NOT GLFW3_FOUND)
 	message(STATUS "Could not find GLFW binaries on system, building from source instead")
 	add_subdirectory("vendor/glfw")
 
 	set(GLFW3_INCLUDE_DIRS glfw)
 	set(GLFW3_LIBRARIES glfw)
+endif()
+
+find_package(GLM)
+if(NOT GLM_FOUND)
+	message(STATUS "Could not find GLM on system, including from source instead")
+	add_subdirectory("vendor/glm")
+
+	set(GLM_INCLUDE_DIRS glm::glm_static)
 endif()
 
 # Include sub-projects.
