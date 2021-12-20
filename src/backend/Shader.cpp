@@ -1,7 +1,12 @@
 #include "Shader.hpp"
 
 #include <iostream>	
+
+#include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>	
+
+#define IMPLEMENT_UNIFORM_FUNCTION(type, func) \
+inline 
 
 AbstractShader::AbstractShader(const std::string& vertexShader, const std::string& fragmentShader) :
 	id(0)
@@ -71,4 +76,13 @@ AbstractShader::~AbstractShader()
 void AbstractShader::Use()
 {
 	glUseProgram(id);
+}
+
+void AbstractShader::SetUniform(const std::string& name, const glm::mat4& value) 
+{
+	GLint location = glGetUniformLocation(id, name.c_str());		
+	if (location == -1)	
+		return;
+
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));												
 }

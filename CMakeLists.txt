@@ -19,7 +19,8 @@ if(NOT GLM_FOUND)
 	message(STATUS "Could not find GLM on system, including from source instead")
 	add_subdirectory("vendor/glm")
 
-	set(GLM_INCLUDE_DIRS glm::glm_static)
+	set(GLM_INCLUDE_DIRS glm)
+	set(GLM_LIBRARIES glm)
 endif()
 
 # Include sub-projects.

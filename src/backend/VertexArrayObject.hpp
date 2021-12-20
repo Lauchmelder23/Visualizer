@@ -34,7 +34,7 @@ public:
 	AbstractVertexArrayObject(const VertexArray& vertices, const IndexArray& indices, const Layout& layout, Usage usage);
 	~AbstractVertexArrayObject();
 
-	void Render();
+	void Render(unsigned int mode = 4);
 
 private:
 	unsigned int vao, vbo, ebo;

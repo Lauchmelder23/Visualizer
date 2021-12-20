@@ -10,13 +10,13 @@ AbstractVertexArrayObject::~AbstractVertexArrayObject()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void AbstractVertexArrayObject::Render()
+void AbstractVertexArrayObject::Render(GLenum mode)
 {
 	assert(vao != 0);
 
 	glBindVertexArray(vao);
 	// GLenum result = glGetError();
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	glDrawElements(mode, indexCount, GL_UNSIGNED_INT, 0);
 }
 
 AbstractVertexArrayObject::AbstractVertexArrayObject(const VertexArray& vertices, const IndexArray& indices, const Layout& layout, Usage usage) :

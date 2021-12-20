@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <string>
 #include <memory>
 
@@ -14,6 +16,8 @@ public:
 
 	inline bool Good() { return id != 0; }
 	void Use();
+
+	void SetUniform(const std::string& name, const glm::mat4& value);
 
 private:
 	unsigned int id;

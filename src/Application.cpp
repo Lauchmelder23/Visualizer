@@ -8,6 +8,9 @@
 
 Application::~Application()
 {
+	if (cube != nullptr)
+		delete cube;
+
 	if (window != nullptr) 
 	{
 		glfwDestroyWindow(window);
@@ -20,7 +23,7 @@ Application::~Application()
 void Application::Init(int width, int height, const std::string& title)
 {
 	// Initialize GLFW
-	if(window == nullptr)
+	if (window == nullptr)
 		glfwInit();
 
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
@@ -59,9 +62,10 @@ void Application::Init(int width, int height, const std::string& title)
 	}
 
 	glViewport(0, 0, mode->width, mode->height);
+	glEnable(GL_DEPTH_TEST);
 
 	// Register GLFW callbacks
-	glfwSetFramebufferSizeCallback(window, 
+	glfwSetFramebufferSizeCallback(window,
 		[](GLFWwindow* window, int width, int height)
 		{
 			glViewport(0, 0, width, height);
@@ -79,49 +83,7 @@ void Application::Init(int width, int height, const std::string& title)
 		}
 	);
 
-
-	// TODO: Remove, this should probably be done elsewhere
-	model = VAOFactory::Produce(
-		{
-			-0.5f, -0.5f,
-			0.0f, 0.5f,
-			0.5f, -0.5f
-		},
-		{
-			0, 1, 2
-		},
-		{
-			{ 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0 }
-		}
-	);
-
-	shader = ShaderFactory::Produce(
-		R"(
-		#version 460 core
-
-		layout (location = 0) in vec2 aPos;
-
-		void main()
-		{
-			gl_Position = vec4(aPos, 0.0, 1.0);
-		}
-		)",
-		R"(
-		#version 460 core
-
-		out vec4 FragColor;
-
-		void main()
-		{
-			FragColor = vec4(0.5f, 0.0f, 0.8f, 1.0f);
-		}
-		)"
-	);
-
-	if (!shader->Good())
-	{
-		throw std::runtime_error("Shader creation failed");
-	}
+	cube = new Cuboid();
 }
 
 void Application::Launch()
@@ -131,10 +93,9 @@ void Application::Launch()
 		glfwPollEvents();
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shader->Use();
-		model->Render();
+		cube->Render();
 
 		glfwSwapBuffers(window);
 	}

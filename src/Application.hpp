@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-#include "Shader.hpp"
-#include "VertexArrayObject.hpp"
+#include "Cuboid.hpp"
 
 struct GLFWwindow;
 
@@ -35,6 +34,5 @@ public:
 private:
 	GLFWwindow* window = nullptr;
 
-	Shader shader = nullptr;
-	VertexArrayObject model = nullptr;
+	Cuboid* cube;
 };
