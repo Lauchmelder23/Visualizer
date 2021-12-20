@@ -1,6 +1,6 @@
 add_executable(visualizer
 	"main.cpp" "Application.cpp"
- "VertexArrayObject.cpp")
+ "VertexArrayObject.cpp" "Shader.cpp")
 
 target_sources(visualizer PUBLIC 
 	${CMAKE_SOURCE_DIR}/vendor/glad/src/glad.c

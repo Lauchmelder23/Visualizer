@@ -31,13 +31,14 @@ class AbstractVertexArrayObject
 
 public:
 	AbstractVertexArrayObject() = delete;
+	AbstractVertexArrayObject(const VertexArray& vertices, const IndexArray& indices, const Layout& layout, Usage usage);
 	~AbstractVertexArrayObject();
 
-private:
-	AbstractVertexArrayObject(const VertexArray& vertices, const IndexArray& indices, const Layout& layout, Usage usage);
+	void Render();
 
 private:
 	unsigned int vao, vbo, ebo;
+	size_t indexCount;
 };
 
 // You cannot actually create this VAO, you are forced to use a shared pointer

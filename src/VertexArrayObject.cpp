@@ -10,11 +10,22 @@ AbstractVertexArrayObject::~AbstractVertexArrayObject()
 	glDeleteVertexArrays(1, &vao);
 }
 
+void AbstractVertexArrayObject::Render()
+{
+	assert(vao != 0);
+
+	glBindVertexArray(vao);
+	// GLenum result = glGetError();
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+}
+
 AbstractVertexArrayObject::AbstractVertexArrayObject(const VertexArray& vertices, const IndexArray& indices, const Layout& layout, Usage usage) :
-	vao(0), vbo(0), ebo(0)
+	vao(0), vbo(0), ebo(0), indexCount(indices.size())
 {
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
 
 	// Determing native OpenGL GLenum depending on specified usage
 	GLenum bufferUsage;
@@ -30,15 +41,11 @@ AbstractVertexArrayObject::AbstractVertexArrayObject(const VertexArray& vertices
 	}
 
 	// Create VBO
-	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), (const void*)(vertices.data()), bufferUsage);
 
 	// Create EBO
-	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), (const void*)(indices.data()), bufferUsage);
 
 	// Set up pipeline layout

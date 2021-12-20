@@ -59,6 +59,50 @@ void Application::Init(int width, int height, const std::string& title)
 			glViewport(0, 0, width, height);
 		}
 	);
+
+
+	// TODO: Remove, this should probably be done elsewhere
+	model = VAOFactory::Produce(
+		{
+			-0.5f, -0.5f,
+			0.0f, 0.5f,
+			0.5f, -0.5f
+		},
+		{
+			0, 1, 2
+		},
+		{
+			{ 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0 }
+		}
+	);
+
+	shader = ShaderFactory::Produce(
+		R"(
+		#version 460 core
+
+		layout (location = 0) in vec2 aPos;
+
+		void main()
+		{
+			gl_Position = vec4(aPos, 0.0, 1.0);
+		}
+		)",
+		R"(
+		#version 460 core
+
+		out vec4 FragColor;
+
+		void main()
+		{
+			FragColor = vec4(0.5f, 0.0f, 0.8f, 1.0f);
+		}
+		)"
+	);
+
+	if (!shader->Good())
+	{
+		throw std::runtime_error("Shader creation failed");
+	}
 }
 
 void Application::Launch()
@@ -69,6 +113,9 @@ void Application::Launch()
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		shader->Use();
+		model->Render();
 
 		glfwSwapBuffers(window);
 	}
