@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 #include <sstream>
+
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 Application::~Application()
@@ -17,9 +19,11 @@ Application::~Application()
 
 void Application::Init(int width, int height, const std::string& title)
 {
+	// Initialize GLFW
 	if(window == nullptr)
 		glfwInit();
 
+	// Create GLFW window
 	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	if (window == nullptr)
 	{
@@ -34,6 +38,27 @@ void Application::Init(int width, int height, const std::string& title)
 	}
 
 	glfwMakeContextCurrent(window);
+
+	// Set up OpenGL
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		glfwDestroyWindow(window);
+		window = nullptr;
+
+		glfwTerminate();
+
+		throw std::runtime_error("Failed to initialize GLAD");
+	}
+
+	glViewport(0, 0, width, height);
+
+	// Register GLFW callbacks
+	glfwSetFramebufferSizeCallback(window, 
+		[](GLFWwindow* window, int width, int height)
+		{
+			glViewport(0, 0, width, height);
+		}
+	);
 }
 
 void Application::Launch()
@@ -41,6 +66,9 @@ void Application::Launch()
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+
+		glClearColor(0.1f, 0.0f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		glfwSwapBuffers(window);
 	}
