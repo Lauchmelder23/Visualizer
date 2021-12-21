@@ -91,7 +91,7 @@ Grid::Grid(const glm::vec2& size, unsigned int linesAlongWidth, unsigned int lin
 
 void Grid::InitializeShader(const CameraBase& camera) const
 {
-	if(glm::dot(glm::rotate(camera.GetQuaternion(), glm::vec3(0.0f, 0.0f, 1.0f)), glm::rotate(GetQuaternion(), glm::vec3(0.0f, 0.0f, 1.0f))) > 0)
+	if(glm::dot(GetPosition() - camera.GetPosition(), glm::rotate(glm::inverse(GetQuaternion()), normal)) < 0.0f)
 		shader->SetUniform("gridColor", glm::vec4(0.5f));
 	else
 		shader->SetUniform("gridColor", glm::vec4(0.0f));

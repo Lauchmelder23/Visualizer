@@ -71,7 +71,7 @@ void Transformable::Scale(const glm::vec3& factor)
 void Transformable::CalculateTransformationMatrix()
 {
 	transformation = glm::mat4(1.0f);
-	transformation = glm::translate(transformation, position);
+	transformation = glm::translate(transformation, -position);
 	transformation *= glm::toMat4(orientation);
 	transformation = glm::scale(transformation, scale);
 }

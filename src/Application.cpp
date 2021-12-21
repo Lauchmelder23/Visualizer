@@ -123,7 +123,7 @@ void Application::Init(int width, int height, const std::string& title)
 
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = Camera(100.0f, aspectRatio);
-	camera.Move(glm::vec3(0.0f, 0.0f, -4.0f));
+	camera.Move(glm::vec3(0.0f, 0.0f, 4.0f));
 
 	orthoCam = OrthogonalCamera(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f);
 
