@@ -46,7 +46,7 @@ void Transformable::Rotate(const glm::vec3& axis, float angle)
 	CalculateTransformationMatrix();
 }
 
-const glm::vec3& Transformable::SetScale()
+const glm::vec3& Transformable::GetScale()
 {
 	return scale;
 }
@@ -66,7 +66,7 @@ void Transformable::Scale(const glm::vec3& factor)
 void Transformable::CalculateTransformationMatrix()
 {
 	transformation = glm::mat4(1.0f);
-	glm::scale(transformation, scale);
+	transformation = glm::translate(transformation, position);
 	transformation *= glm::toMat4(orientation);
-	glm::translate(transformation, position);
+	transformation = glm::scale(transformation, scale);
 }

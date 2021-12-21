@@ -17,7 +17,7 @@ public:
 	void SetRotation(const glm::vec3& eulerAngles);
 	void Rotate(const glm::vec3& axis, float angle);
 
-	const glm::vec3& SetScale();
+	const glm::vec3& GetScale();
 	void SetScale(const glm::vec3& scale);
 	void Scale(const glm::vec3& factor);
 

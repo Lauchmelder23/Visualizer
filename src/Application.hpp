@@ -34,5 +34,6 @@ public:
 private:
 	GLFWwindow* window = nullptr;
 
+	glm::vec3 cubeOrientation, cubePosition, cubeScale;
 	Cuboid* cube;
 };

@@ -5,6 +5,9 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
 #ifdef NDEBUG	
 	#define FULLSCREEN
@@ -12,6 +15,10 @@
 
 Application::~Application()
 {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	if (cube != nullptr)
 		delete cube;
 
@@ -95,7 +102,20 @@ void Application::Init(int width, int height, const std::string& title)
 		}
 	);
 
+	// Set up ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 460 core");
+
+	ImGui::StyleColorsDark();
+
 	cube = new Cuboid();
+	cubePosition = glm::vec3(0.0f);
+	cubeOrientation = glm::vec3(0.0f);
+	cubeScale = glm::vec3(1.0f);
 }
 
 void Application::Launch()
@@ -104,12 +124,27 @@ void Application::Launch()
 	{
 		glfwPollEvents();
 
-		cube->Rotate(glm::vec3(0.2f, 1.0f, -0.4f), 1.0f);
+		cube->SetPosition(cubePosition);
+		cube->SetRotation(cubeOrientation);
+		cube->SetScale(cubeScale);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		cube->Render();
+
+		ImGui::Begin("Debug");
+		ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
+		ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), 0.0f, glm::two_pi<float>());
+		ImGui::SliderFloat3("Scale", &(cubeScale[0]), 0.0f, 2.0f);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 	}

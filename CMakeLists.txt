@@ -5,6 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("Visualizer")
 
+set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor)
+
 find_package(GLFW3)
 if(NOT GLFW3_FOUND)
 	message(STATUS "Could not find GLFW binaries on system, building from source instead")
