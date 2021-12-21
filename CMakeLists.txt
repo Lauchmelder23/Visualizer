@@ -26,4 +26,5 @@ if(NOT GLM_FOUND)
 endif()
 
 # Include sub-projects.
+add_subdirectory("backend")
 add_subdirectory ("src")

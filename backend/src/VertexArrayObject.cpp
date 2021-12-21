@@ -1,4 +1,4 @@
-#include "VertexArrayObject.hpp"
+#include "backend/VertexArrayObject.hpp"
 
 #include <assert.h>
 #include <glad/glad.h>

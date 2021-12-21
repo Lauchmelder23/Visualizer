@@ -1,10 +1,8 @@
 add_executable(visualizer
-	"main.cpp" "Application.cpp"
- "backend/VertexArrayObject.cpp" "backend/Shader.cpp"  "Cuboid.cpp" "backend/Drawable.cpp" "backend/Transformable.cpp")
+	"main.cpp" "Application.cpp" "Cuboid.cpp"
+)
 
 target_sources(visualizer PUBLIC 
-	${VENDOR_DIR}/glad/src/glad.c
-
 	${VENDOR_DIR}/imgui/backends/imgui_impl_opengl3.cpp
 	${VENDOR_DIR}/imgui/backends/imgui_impl_glfw.cpp
 	${VENDOR_DIR}/imgui/imgui.cpp
@@ -16,12 +14,11 @@ target_sources(visualizer PUBLIC
 
 target_include_directories(visualizer PRIVATE 
 	${GLFW3_INCLUDE_DIRS}
-	${GLM_INCLUDE_DIRS}
-	${VENDOR_DIR}/glad/include
 	${VENDOR_DIR}/imgui
+	backend
 )
 
 target_link_libraries(visualizer PRIVATE 
 	${GLFW3_LIBRARIES} 
-	${GLM_LIBRARIES}
+	backend
 )
