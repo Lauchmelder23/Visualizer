@@ -4,6 +4,8 @@
 #include "VertexArrayObject.hpp"
 #include "Shader.hpp"
 
+class CameraBase;
+
 enum class PrimitiveType
 {
 	Lines = GL_LINES,
@@ -21,8 +23,8 @@ public:
 	Drawable(const Drawable& other) = delete;
 	void operator=(const Drawable& other) = delete;
 
-	virtual void InitializeShader() = 0;
-	void Render();
+	virtual void InitializeShader(const CameraBase& camera) const = 0;
+	void Draw(const CameraBase& camera) const;
 	void SetPrimitiveType(PrimitiveType type);
 
 protected:

@@ -1,9 +1,16 @@
 #pragma once
 
 #include <string>
+#include "backend/Camera.hpp"
 #include "Cuboid.hpp"
 
 struct GLFWwindow;
+
+struct WindowData
+{
+	Camera* camera;
+	OrthogonalCamera* orthoCam;
+};
 
 class Application
 {
@@ -33,6 +40,11 @@ public:
 
 private:
 	GLFWwindow* window = nullptr;
+	WindowData data;
+
+	Camera camera;
+	OrthogonalCamera orthoCam;
+	CameraBase* activeCamera;
 
 	glm::vec3 cubeOrientation, cubePosition, cubeScale;
 	Cuboid* cube;

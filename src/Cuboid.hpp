@@ -14,7 +14,7 @@ class Cuboid :
 public:
 	Cuboid();
 
-	void InitializeShader() override;
+	void InitializeShader(const CameraBase& camera) const override;
 
 private:
 

@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "backend/ObjectManager.hpp"
+#include "backend/Camera.hpp"
 #include "Util.hpp"
 
 Cuboid::Cuboid()
@@ -81,9 +82,9 @@ Cuboid::Cuboid()
 	perspective = glm::perspective(glm::radians(100.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 }
 
-void Cuboid::InitializeShader()
+void Cuboid::InitializeShader(const CameraBase& camera) const
 {
 	shader->SetUniform("model", transformation);
-	shader->SetUniform("view", view);
-	shader->SetUniform("perspective", perspective);
+	shader->SetUniform("view", camera.GetView());
+	shader->SetUniform("perspective", camera.GetProjection());
 }

@@ -1,9 +1,9 @@
 #include "backend/Drawable.hpp"
 
-void Drawable::Render()
+void Drawable::Draw(const CameraBase& camera) const
 {
 	shader->Use();
-	InitializeShader();
+	InitializeShader(camera);
 	vao->Render(static_cast<unsigned int>(type));
 }
 

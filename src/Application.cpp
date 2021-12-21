@@ -87,6 +87,13 @@ void Application::Init(int width, int height, const std::string& title)
 	glfwSetFramebufferSizeCallback(window,
 		[](GLFWwindow* window, int width, int height)
 		{
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+
+			float aspectRatio = (float)width / (float)height;
+			*(data->camera) = Camera(100.0f, aspectRatio);
+			data->camera->Move(glm::vec3(0.0f, 0.0f, -4.0f));
+			*(data->orthoCam) = OrthogonalCamera(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f);
+
 			glViewport(0, 0, width, height);
 		}
 	);
@@ -102,6 +109,8 @@ void Application::Init(int width, int height, const std::string& title)
 		}
 	);
 
+	glfwSetWindowUserPointer(window, &data);
+
 	// Set up ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -112,10 +121,22 @@ void Application::Init(int width, int height, const std::string& title)
 
 	ImGui::StyleColorsDark();
 
+	float aspectRatio = (float)windowWidth / (float)windowHeight;
+	camera = Camera(100.0f, aspectRatio);
+	camera.Move(glm::vec3(0.0f, 0.0f, -4.0f));
+
+	orthoCam = OrthogonalCamera(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f);
+
+	activeCamera = &camera;
+
 	cube = new Cuboid();
 	cubePosition = glm::vec3(0.0f);
 	cubeOrientation = glm::vec3(0.0f);
 	cubeScale = glm::vec3(1.0f);
+
+	data.camera = &camera;
+	data.orthoCam = &orthoCam;
+
 }
 
 void Application::Launch()
@@ -135,12 +156,31 @@ void Application::Launch()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		cube->Render();
+		cube->Draw(*activeCamera);
 
 		ImGui::Begin("Debug");
-		ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
-		ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), 0.0f, glm::two_pi<float>());
-		ImGui::SliderFloat3("Scale", &(cubeScale[0]), 0.0f, 2.0f);
+
+		if (ImGui::CollapsingHeader("Cube"))
+		{
+			ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
+			ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), 0.0f, glm::two_pi<float>());
+			ImGui::SliderFloat3("Scale", &(cubeScale[0]), 0.0f, 2.0f);
+		}
+
+		if (ImGui::CollapsingHeader("Camera"))
+		{
+			ImGui::Columns(2);
+			ImGui::Text("Projection: ");
+			ImGui::NextColumn();
+			if (ImGui::Button((activeCamera == &camera) ? "Perspective" : "Orthographic"))
+			{
+				if (activeCamera == &camera)
+					activeCamera = &orthoCam;
+				else
+					activeCamera = &camera;
+			}
+		}
+
 		ImGui::End();
 
 		ImGui::Render();
