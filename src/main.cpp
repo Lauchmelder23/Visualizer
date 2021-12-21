@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		app.Init(800, 800, "Visualizer");
+		app.Init(1280, 720, "Visualizer");
 	}
 	catch (const std::runtime_error& err)
 	{

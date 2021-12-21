@@ -6,6 +6,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#ifdef NDEBUG	
+	#define FULLSCREEN
+#endif
+
 Application::~Application()
 {
 	if (cube != nullptr)
@@ -26,7 +30,11 @@ void Application::Init(int width, int height, const std::string& title)
 	if (window == nullptr)
 		glfwInit();
 
-	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	int windowWidth = width, windowHeight = height;
+	GLFWmonitor* monitor = NULL;
+
+#ifdef FULLSCREEN
+	monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
 	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
@@ -34,8 +42,12 @@ void Application::Init(int width, int height, const std::string& title)
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
+	windowWidth = mode->width;
+	windowHeight = mode->height;
+#endif
+
 	// Create GLFW window
-	window = glfwCreateWindow(mode->width, mode->height, title.c_str(), monitor, NULL);
+	window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), monitor, NULL);
 	if (window == nullptr)
 	{
 		const char* errorbuf;
@@ -61,7 +73,7 @@ void Application::Init(int width, int height, const std::string& title)
 		throw std::runtime_error("Failed to initialize GLAD");
 	}
 
-	glViewport(0, 0, mode->width, mode->height);
+	glViewport(0, 0, windowWidth, windowHeight);
 	glEnable(GL_DEPTH_TEST);
 
 	// Register GLFW callbacks
@@ -91,6 +103,8 @@ void Application::Launch()
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+
+		cube->Rotate(glm::vec3(0.2f, 1.0f, -0.4f), 1.0f);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
