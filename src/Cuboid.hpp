@@ -15,9 +15,4 @@ public:
 	Cuboid();
 
 	void InitializeShader(const CameraBase& camera) const override;
-
-private:
-
-	// TODO: Remove view and projection matrices from cube class
-	glm::mat4 view, perspective;
 };

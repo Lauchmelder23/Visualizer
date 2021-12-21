@@ -6,7 +6,7 @@ Transformable::Transformable() :
 	CalculateTransformationMatrix();
 }
 
-const glm::vec3& Transformable::GetPosition()
+const glm::vec3& Transformable::GetPosition() const
 {
 	return position;
 }
@@ -23,9 +23,14 @@ void Transformable::Move(const glm::vec3& direction)
 	CalculateTransformationMatrix();
 }
 
-const glm::vec3 Transformable::GetRotation()
+const glm::vec3 Transformable::GetRotation() const
 {
 	return glm::eulerAngles(orientation);
+}
+
+const glm::quat& Transformable::GetQuaternion() const
+{
+	return orientation;
 }
 
 void Transformable::SetRotation(const glm::vec3& axis, float angle)
@@ -46,7 +51,7 @@ void Transformable::Rotate(const glm::vec3& axis, float angle)
 	CalculateTransformationMatrix();
 }
 
-const glm::vec3& Transformable::GetScale()
+const glm::vec3& Transformable::GetScale() const
 {
 	return scale;
 }

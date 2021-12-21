@@ -1,6 +1,6 @@
 add_executable(visualizer
 	"main.cpp" "Application.cpp" "Cuboid.cpp"
-)
+  "Grid.cpp")
 
 target_sources(visualizer PUBLIC 
 	${VENDOR_DIR}/imgui/backends/imgui_impl_opengl3.cpp

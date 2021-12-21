@@ -19,6 +19,7 @@ public:
 	void Use();
 
 	void SetUniform(const std::string& name, const glm::mat4& value);
+	void SetUniform(const std::string& name, const glm::vec4& value);
 
 private:
 	unsigned int id;

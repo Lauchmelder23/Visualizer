@@ -2,7 +2,7 @@
 
 #include <string>
 #include "backend/Camera.hpp"
-#include "Cuboid.hpp"
+#include "Grid.hpp"
 
 struct GLFWwindow;
 
@@ -47,5 +47,5 @@ private:
 	CameraBase* activeCamera;
 
 	glm::vec3 cubeOrientation, cubePosition, cubeScale;
-	Cuboid* cube;
+	Grid* grid;
 };

@@ -19,8 +19,8 @@ Application::~Application()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	if (cube != nullptr)
-		delete cube;
+	if (grid != nullptr)
+		delete grid;
 
 	if (window != nullptr) 
 	{
@@ -129,7 +129,7 @@ void Application::Init(int width, int height, const std::string& title)
 
 	activeCamera = &camera;
 
-	cube = new Cuboid();
+	grid = new Grid(glm::vec2(5.0f, 4.0f), 25, 20);
 	cubePosition = glm::vec3(0.0f);
 	cubeOrientation = glm::vec3(0.0f);
 	cubeScale = glm::vec3(1.0f);
@@ -137,6 +137,10 @@ void Application::Init(int width, int height, const std::string& title)
 	data.camera = &camera;
 	data.orthoCam = &orthoCam;
 
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_MULTISAMPLE);
 }
 
 void Application::Launch()
@@ -145,9 +149,9 @@ void Application::Launch()
 	{
 		glfwPollEvents();
 
-		cube->SetPosition(cubePosition);
-		cube->SetRotation(cubeOrientation);
-		cube->SetScale(cubeScale);
+		grid->SetPosition(cubePosition);
+		grid->SetRotation(cubeOrientation);
+		grid->SetScale(cubeScale);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -156,11 +160,11 @@ void Application::Launch()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		cube->Draw(*activeCamera);
+		grid->Draw(*activeCamera);
 
 		ImGui::Begin("Debug");
 
-		if (ImGui::CollapsingHeader("Cube"))
+		if (ImGui::CollapsingHeader("Grid"))
 		{
 			ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
 			ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), 0.0f, glm::two_pi<float>());
