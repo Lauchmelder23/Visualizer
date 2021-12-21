@@ -75,21 +75,15 @@ Cuboid::Cuboid()
 		ShaderManager::GetInstance().Register(CUBOID_ID, shader);
 	}
 
-	model = glm::mat4(1.0);
+	type = PrimitiveType::Lines;
 
 	view = glm::lookAt(glm::vec3(2.0f, 2.0f, -3.5f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
 	perspective = glm::perspective(glm::radians(100.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 }
 
-void Cuboid::Render()
+void Cuboid::InitializeShader()
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	shader->Use();
-	shader->SetUniform("model", model);
+	shader->SetUniform("model", transformation);
 	shader->SetUniform("view", view);
 	shader->SetUniform("perspective", perspective);
-
-	vao->Render(GL_LINES);
 }

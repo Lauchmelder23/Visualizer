@@ -1,24 +1,23 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "backend/VertexArrayObject.hpp"
-#include "backend/Shader.hpp"
+#include "backend/Drawable.hpp"
+#include "backend/Transformable.hpp"
 
 /**
  * A cuboid that sits at a position and expands into all
  * three spatial directions
  */
-class Cuboid
+class Cuboid :
+	public Drawable, public Transformable
 {
 public:
 	Cuboid();
 
-	void Render();
+	void InitializeShader() override;
 
 private:
-	VertexArrayObject vao;
-	Shader shader;
 
 	// TODO: Remove view and projection matrices from cube class
-	glm::mat4 model, view, perspective;
+	glm::mat4 view, perspective;
 };

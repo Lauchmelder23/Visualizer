@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 
 class AbstractShader
 {
@@ -21,6 +22,8 @@ public:
 
 private:
 	unsigned int id;
+
+	bool recording = false;
 };
 
 typedef std::shared_ptr<AbstractShader> Shader;
