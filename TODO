@@ -1,0 +1,16 @@
+Camera should use up- and left vector instead of quaternion for rotation. It makes calculations like lookAt possible.
+Should Camera really be a Transformable? Probably not, it really only shares the positional aspect of a Transformable,
+but scaling makes no sense and rotations aren't useful in the sense of a camera.
+
+Generate and plot functions with 2D domain and 1D range and color them using frag shaders.
+Perhaps take in a function pointer with signature float(float, float) as well as a boundary box and domain. Use it to
+generate the vertices and finally create a mesh 
+ -> Find a way to efficiently update that mesh for if the function changes. 
+ -> The final visualizer will only return functions of signature float(float), which we "append" to the mesh on one edge
+    to create a moving spectrum of the music. Eventually the old parts of the mesh get pushed out of the bounding box, and
+    we need to find an efficient way of reconstructing the mesh when that happens. I don't want to have to copy the entire
+    buffer and insert it a bit earlier into memory, I'd rather have a pointer that can update a row of vertices when we need 
+    it and then cyclicly advance to the next row. Then I need to find a way to generate the indices for that mesh since the 
+    beginning/end of the spectrum can be at any point in the buffer.
+
+Figure out how to have an "inside out" cube with meshed faces. That will serve as the coordinate system for the plot
