@@ -91,7 +91,6 @@ void Application::Init(int width, int height, const std::string& title)
 
 			float aspectRatio = (float)width / (float)height;
 			data->camera->Update(100.0f, aspectRatio, 0.01f, 100.0f);
-			data->orthoCam->Update(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f, -100.0f, 100.0f);
 
 			glViewport(0, 0, width, height);
 		}
@@ -121,17 +120,11 @@ void Application::Init(int width, int height, const std::string& title)
 	ImGui::StyleColorsDark();
 
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
-	camera = Camera(100.0f, aspectRatio);
-	camera.Move(glm::vec3(0.0f, 4.0f, -4.0f));
-	camera.LookAt(glm::vec3(0.0f));
+	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
+	pitch = camera.GetAngles().x;
+	yaw = camera.GetAngles().y;
 
-	orthoCam = OrthogonalCamera(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f);
-	orthoCam.Move(glm::vec3(0.0f, 4.0f, -4.0f));
-	orthoCam.LookAt(glm::vec3(0.0f));
-
-	activeCamera = &camera;
-
-	plot = new Plot3D({ -glm::two_pi<float>(), -glm::two_pi<float>(), -1.5f, glm::two_pi<float>(), glm::two_pi<float>(), 1.5f }, 0.5f, 0.1f,
+	plot = new Plot3D({ -glm::two_pi<float>(), -1.5f * glm::two_pi<float>(), -1.5f, glm::two_pi<float>(), 1.5f * glm::two_pi<float>(), 1.5f }, 0.5f, 0.1f,
 		[](float x, float y)
 		{
 			return (cos(x) + cos(y)) * 0.5f;
@@ -144,7 +137,6 @@ void Application::Init(int width, int height, const std::string& title)
 	cubeScale = glm::vec3(1.0f);
 
 	data.camera = &camera;
-	data.orthoCam = &orthoCam;
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -162,6 +154,8 @@ void Application::Launch()
 		plot->SetRotation(cubeOrientation);
 		plot->SetScale(cubeScale);
 
+		camera.SetPosition(pitch, yaw);
+
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -169,7 +163,7 @@ void Application::Launch()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		plot->Draw(*activeCamera);
+		plot->Draw(camera);
 
 		ImGui::Begin("Debug");
 
@@ -182,16 +176,8 @@ void Application::Launch()
 
 		if (ImGui::CollapsingHeader("Camera"))
 		{
-			ImGui::Columns(2);
-			ImGui::Text("Projection: ");
-			ImGui::NextColumn();
-			if (ImGui::Button((activeCamera == &camera) ? "Perspective" : "Orthographic"))
-			{
-				if (activeCamera == &camera)
-					activeCamera = &orthoCam;
-				else
-					activeCamera = &camera;
-			}
+			ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f);
+			ImGui::SliderFloat("Pitch", &pitch, 1.0f, 179.0f);
 		}
 
 		ImGui::End();

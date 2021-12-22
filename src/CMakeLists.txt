@@ -1,6 +1,6 @@
 add_executable(visualizer
 	"main.cpp" "Application.cpp" 
-   "Plot3D.cpp")
+   "Plot3D.cpp" "OrbitingCamera.cpp")
 
 target_sources(visualizer PUBLIC 
 	${VENDOR_DIR}/imgui/backends/imgui_impl_opengl3.cpp

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "backend/Camera.hpp"
+#include "OrbitingCamera.hpp"
 #include "Plot3D.hpp"
 
 struct GLFWwindow;
@@ -42,9 +42,8 @@ private:
 	GLFWwindow* window = nullptr;
 	WindowData data;
 
-	Camera camera;
-	OrthogonalCamera orthoCam;
-	CameraBase* activeCamera;
+	OrbitingCamera camera;
+	float pitch, yaw;
 
 	glm::vec3 cubeOrientation, cubePosition, cubeScale;
 	Plot3D* plot;
