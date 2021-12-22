@@ -19,8 +19,8 @@ Application::~Application()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	if (grid != nullptr)
-		delete grid;
+	if (plot != nullptr)
+		delete plot;
 
 	if (window != nullptr) 
 	{
@@ -90,9 +90,8 @@ void Application::Init(int width, int height, const std::string& title)
 			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
 			float aspectRatio = (float)width / (float)height;
-			*(data->camera) = Camera(100.0f, aspectRatio);
-			data->camera->Move(glm::vec3(0.0f, 0.0f, -4.0f));
-			*(data->orthoCam) = OrthogonalCamera(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f);
+			data->camera->Update(100.0f, aspectRatio, 0.01f, 100.0f);
+			data->orthoCam->Update(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f, -100.0f, 100.0f);
 
 			glViewport(0, 0, width, height);
 		}
@@ -123,13 +122,23 @@ void Application::Init(int width, int height, const std::string& title)
 
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = Camera(100.0f, aspectRatio);
-	camera.Move(glm::vec3(0.0f, 0.0f, 4.0f));
+	camera.Move(glm::vec3(0.0f, 4.0f, -4.0f));
+	camera.LookAt(glm::vec3(0.0f));
 
 	orthoCam = OrthogonalCamera(-3.0f * aspectRatio, 3.0f * aspectRatio, -3.0f, 3.0f);
+	orthoCam.Move(glm::vec3(0.0f, 4.0f, -4.0f));
+	orthoCam.LookAt(glm::vec3(0.0f));
 
 	activeCamera = &camera;
 
-	grid = new Grid(glm::vec2(5.0f, 4.0f), 25, 20);
+	plot = new Plot3D({ -glm::two_pi<float>(), -glm::two_pi<float>(), -1.5f, glm::two_pi<float>(), glm::two_pi<float>(), 1.5f }, 0.5f, 0.1f,
+		[](float x, float y)
+		{
+			return (cos(x) + cos(y)) * 0.5f;
+			// return cos(x);
+		}
+		);
+
 	cubePosition = glm::vec3(0.0f);
 	cubeOrientation = glm::vec3(0.0f);
 	cubeScale = glm::vec3(1.0f);
@@ -139,7 +148,7 @@ void Application::Init(int width, int height, const std::string& title)
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	glEnable(GL_CULL_FACE);
+	// glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
 }
 
@@ -149,9 +158,9 @@ void Application::Launch()
 	{
 		glfwPollEvents();
 
-		grid->SetPosition(cubePosition);
-		grid->SetRotation(cubeOrientation);
-		grid->SetScale(cubeScale);
+		plot->SetPosition(cubePosition);
+		plot->SetRotation(cubeOrientation);
+		plot->SetScale(cubeScale);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,14 +169,14 @@ void Application::Launch()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		grid->Draw(*activeCamera);
+		plot->Draw(*activeCamera);
 
 		ImGui::Begin("Debug");
 
-		if (ImGui::CollapsingHeader("Grid"))
+		if (ImGui::CollapsingHeader("Plot"))
 		{
 			ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
-			ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), 0.0f, glm::two_pi<float>());
+			ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), -glm::pi<float>(), glm::pi<float>());
 			ImGui::SliderFloat3("Scale", &(cubeScale[0]), 0.0f, 2.0f);
 		}
 

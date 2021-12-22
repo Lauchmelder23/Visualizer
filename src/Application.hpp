@@ -2,7 +2,7 @@
 
 #include <string>
 #include "backend/Camera.hpp"
-#include "Grid.hpp"
+#include "Plot3D.hpp"
 
 struct GLFWwindow;
 
@@ -47,5 +47,5 @@ private:
 	CameraBase* activeCamera;
 
 	glm::vec3 cubeOrientation, cubePosition, cubeScale;
-	Grid* grid;
+	Plot3D* plot;
 };

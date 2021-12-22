@@ -3,7 +3,7 @@
 void Drawable::Draw(const CameraBase& camera) const
 {
 	shader->Use();
-	InitializeShader(camera);
+	PreRender(camera);
 	vao->Render(static_cast<unsigned int>(type));
 }
 

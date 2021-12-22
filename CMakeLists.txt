@@ -5,6 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("Visualizer")
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor)
 
 find_package(GLFW3)

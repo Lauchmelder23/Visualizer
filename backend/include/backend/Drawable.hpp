@@ -23,7 +23,7 @@ public:
 	Drawable(const Drawable& other) = delete;
 	void operator=(const Drawable& other) = delete;
 
-	virtual void InitializeShader(const CameraBase& camera) const = 0;
+	virtual void PreRender(const CameraBase& camera) const { };
 	void Draw(const CameraBase& camera) const;
 	void SetPrimitiveType(PrimitiveType type);
 

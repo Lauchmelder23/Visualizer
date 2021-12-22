@@ -1,7 +1,7 @@
 #include "backend/Transformable.hpp"
 
 Transformable::Transformable() :
-	position(0.0f), scale(1.0f), orientation(0.0, 0.0, 0.0, 1.0)
+	position(0.0f), scale(1.0f), orientation(glm::vec3(0.0, 0.0, 0.0))
 {
 	CalculateTransformationMatrix();
 }
@@ -41,6 +41,11 @@ void Transformable::SetRotation(const glm::vec3& axis, float angle)
 
 void Transformable::SetRotation(const glm::vec3& eulerAngles)
 {
+	/*orientation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
+	orientation = glm::rotate(orientation, eulerAngles.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	orientation = glm::rotate(orientation, eulerAngles.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	orientation = glm::rotate(orientation, eulerAngles.z, glm::vec3(0.0f, 0.0f, 1.0f));*/
+
 	orientation = glm::quat(eulerAngles);
 	CalculateTransformationMatrix();
 }
@@ -71,7 +76,7 @@ void Transformable::Scale(const glm::vec3& factor)
 void Transformable::CalculateTransformationMatrix()
 {
 	transformation = glm::mat4(1.0f);
-	transformation = glm::translate(transformation, -position);
-	transformation *= glm::toMat4(orientation);
+	transformation = glm::translate(transformation, position);
+	transformation *= glm::mat4(orientation);
 	transformation = glm::scale(transformation, scale);
 }
