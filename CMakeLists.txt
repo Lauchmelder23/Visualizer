@@ -18,15 +18,7 @@ if(NOT GLFW3_FOUND)
 	set(GLFW3_LIBRARIES glfw)
 endif()
 
-find_package(GLM)
-if(NOT GLM_FOUND)
-	message(STATUS "Could not find GLM on system, including from source instead")
-	add_subdirectory("vendor/glm")
-
-	set(GLM_INCLUDE_DIRS glm)
-	set(GLM_LIBRARIES glm)
-endif()
 
 # Include sub-projects.
-add_subdirectory("backend")
+add_subdirectory ("vendor/lol")
 add_subdirectory ("src")

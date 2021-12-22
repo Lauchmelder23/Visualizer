@@ -4,8 +4,7 @@
 #include <array>
 #include <iostream>
 
-#include "backend/Camera.hpp"
-#include "backend/ObjectManager.hpp"
+#include <lol/lol.hpp>
 #include "Util.hpp"
 
 inline float Map(const glm::vec2& from, const glm::vec2& to, float val)
@@ -25,7 +24,7 @@ inline float Map(const glm::vec2& from, const glm::vec2& to, float val)
  * 
  * @return Number of vertices per slice in the plot
  */
-unsigned int CreateVertexList(const BBox& domainAndRange, float scale, float resolution, PlottableFunction func, std::vector<std::optional<unsigned int>>& functionValues, std::vector<float>& vertices);
+unsigned int CreateVertexList(const lol::BBox& domainAndRange, float scale, float resolution, PlottableFunction func, std::vector<std::optional<unsigned int>>& functionValues, std::vector<float>& vertices);
 
 /**
  * Triangulate the set of vertices to create the plot
@@ -36,7 +35,7 @@ unsigned int CreateVertexList(const BBox& domainAndRange, float scale, float res
  */
 void Triangulate(const std::vector<std::optional<unsigned int>>& functionValues, unsigned int sliceLength, std::vector<unsigned int>& indices);
 
-Plot3D::Plot3D(const BBox& domainAndRange, float scale, float resolution, PlottableFunction func)
+Plot3D::Plot3D(const lol::BBox& domainAndRange, float scale, float resolution, PlottableFunction func)
 {
 	// magic epsilon
 	if (resolution < 0.0001f) return;
@@ -49,17 +48,17 @@ Plot3D::Plot3D(const BBox& domainAndRange, float scale, float resolution, Plotta
 	unsigned int sliceLength = CreateVertexList(domainAndRange, scale, resolution, func, functionValues, vertices);
 	Triangulate(functionValues, sliceLength, indices);
 
-	vao = VAOFactory::Produce(vertices, indices, 
+	vao = lol::VAOFactory::Produce(vertices, indices,
 		{
 			{ 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0 },
 			{ 1, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(3 * sizeof(float))}
 		}
 	);
 
-	shader = ShaderManager::GetInstance().Get(PLOT3D_ID);
+	shader = lol::ShaderManager::GetInstance().Get(PLOT3D_ID);
 	if (shader == nullptr)
 	{
-		shader = ShaderFactory::Produce(
+		shader = lol::ShaderFactory::Produce(
 			R"(
 				#version 440 core
 			
@@ -92,18 +91,18 @@ Plot3D::Plot3D(const BBox& domainAndRange, float scale, float resolution, Plotta
 			)"
 		);
 
-		ShaderManager::GetInstance().Register(PLOT3D_ID, shader);
+		lol::ShaderManager::GetInstance().Register(PLOT3D_ID, shader);
 	}
 }
 
-void Plot3D::PreRender(const CameraBase& camera) const
+void Plot3D::PreRender(const lol::CameraBase& camera) const
 {
 	shader->SetUniform("model", transformation);
 	shader->SetUniform("view", camera.GetView());
 	shader->SetUniform("projection", camera.GetProjection());
 }
 
-unsigned int CreateVertexList(const BBox& domainAndRange, float scale, float resolution, PlottableFunction func, std::vector<std::optional<unsigned int>>& functionValues, std::vector<float>& vertices)
+unsigned int CreateVertexList(const lol::BBox& domainAndRange, float scale, float resolution, PlottableFunction func, std::vector<std::optional<unsigned int>>& functionValues, std::vector<float>& vertices)
 {
 	unsigned int sliceLength = 0;
 

@@ -2,18 +2,16 @@
 
 #include <functional>
 
-#include "backend/Drawable.hpp"
-#include "backend/Transformable.hpp"
-#include "backend/BoundingBox.hpp"
+#include <lol/lol.hpp>
 
 typedef std::function<float(float, float)> PlottableFunction;
 
 class Plot3D :
-	public Transformable, public Drawable
+	public lol::Transformable, public lol::Drawable
 {
 public:
-	Plot3D(const BBox& domainAndRange, float scale, float resolution, PlottableFunction func);
+	Plot3D(const lol::BBox& domainAndRange, float scale, float resolution, PlottableFunction func);
 
 private:
-	void PreRender(const CameraBase& camera) const override;
+	void PreRender(const lol::CameraBase& camera) const override;
 };

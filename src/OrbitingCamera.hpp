@@ -1,8 +1,8 @@
 #pragma once
 
-#include "backend/Camera.hpp"
+#include <lol/lol.hpp>
 
-class OrbitingCamera : public Camera
+class OrbitingCamera : public lol::Camera
 {
 public:
 	OrbitingCamera() {}

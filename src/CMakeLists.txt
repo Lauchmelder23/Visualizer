@@ -1,6 +1,7 @@
 add_executable(visualizer
 	"main.cpp" "Application.cpp" 
-   "Plot3D.cpp" "OrbitingCamera.cpp")
+   "Plot3D.cpp" "OrbitingCamera.cpp"
+)
 
 target_sources(visualizer PUBLIC 
 	${VENDOR_DIR}/imgui/backends/imgui_impl_opengl3.cpp
@@ -15,10 +16,10 @@ target_sources(visualizer PUBLIC
 target_include_directories(visualizer PRIVATE 
 	${GLFW3_INCLUDE_DIRS}
 	${VENDOR_DIR}/imgui
-	backend
+	lol
 )
 
 target_link_libraries(visualizer PRIVATE 
 	${GLFW3_LIBRARIES} 
-	backend
+	lol
 )

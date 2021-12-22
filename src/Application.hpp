@@ -8,8 +8,7 @@ struct GLFWwindow;
 
 struct WindowData
 {
-	Camera* camera;
-	OrthogonalCamera* orthoCam;
+	lol::Camera* camera;
 };
 
 class Application
