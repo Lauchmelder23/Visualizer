@@ -16,7 +16,4 @@ public:
 
 private:
 	void PreRender(const CameraBase& camera) const override;
-
-private:
-	glm::vec2 range;
 };
