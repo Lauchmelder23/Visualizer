@@ -48,7 +48,7 @@ Plot3D::Plot3D(const lol::BBox& domainAndRange, float scale, float resolution, P
 	unsigned int sliceLength = CreateVertexList(domainAndRange, scale, resolution, func, functionValues, vertices);
 	Triangulate(functionValues, sliceLength, indices);
 
-	vao = lol::VAOFactory::Produce(vertices, indices,
+	vao = lol::UniqueVertexArrayObject::Share(vertices, indices,
 		lol::Layout {
 			{ 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0 },
 			{ 1, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(3 * sizeof(float))}
@@ -58,7 +58,7 @@ Plot3D::Plot3D(const lol::BBox& domainAndRange, float scale, float resolution, P
 	shader = lol::ShaderManager::GetInstance().Get(PLOT3D_ID);
 	if (shader == nullptr)
 	{
-		shader = lol::ShaderFactory::Produce(
+		shader = lol::UniqueShader::Share(
 			R"(
 				#version 440 core
 			
