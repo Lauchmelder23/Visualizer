@@ -49,7 +49,7 @@ Plot3D::Plot3D(const lol::BBox& domainAndRange, float scale, float resolution, P
 	Triangulate(functionValues, sliceLength, indices);
 
 	vao = lol::VAOFactory::Produce(vertices, indices,
-		{
+		lol::Layout {
 			{ 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0 },
 			{ 1, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(3 * sizeof(float))}
 		}
