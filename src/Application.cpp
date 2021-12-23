@@ -124,7 +124,7 @@ void Application::Init(int width, int height, const std::string& title)
 	pitch = camera.GetAngles().x;
 	yaw = camera.GetAngles().y;
 
-	plot = new Plot3D({ -glm::two_pi<float>(), -1.5f * glm::two_pi<float>(), -1.5f, glm::two_pi<float>(), 1.5f * glm::two_pi<float>(), 1.5f }, 0.5f, 0.1f,
+	plot = new Plot3D({ -glm::two_pi<float>(), -glm::two_pi<float>(), -1.5f, glm::two_pi<float>(), glm::two_pi<float>(), 1.5f }, 0.5f, 0.1f,
 		[](float x, float y)
 		{
 			return (cos(x) + cos(y)) * 0.5f;
