@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 	}
 
 	app.Launch();
+	app.Quit();
 
 	return 0;
 }

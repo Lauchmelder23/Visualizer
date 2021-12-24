@@ -35,6 +35,7 @@ private:
 
 public:
 	void Init(int width, int height, const std::string& title);
+	void Quit();
 	void Launch();
 
 private:

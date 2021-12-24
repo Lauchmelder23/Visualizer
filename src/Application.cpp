@@ -16,6 +16,12 @@
 
 Application::~Application()
 {
+	
+}
+
+
+void Application::Quit()
+{
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -23,7 +29,7 @@ Application::~Application()
 	for (Shape* shape : shapes)
 		delete shape;
 
-	if (window != nullptr) 
+	if (window != nullptr)
 	{
 		glfwDestroyWindow(window);
 		window = nullptr;

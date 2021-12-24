@@ -38,6 +38,11 @@ Shape::Shape()
 	}
 }
 
+Shape::~Shape()
+{
+	lol::ShaderManager::GetInstance().Return(SHAPE_ID);
+}
+
 void Shape::PreRender(const lol::CameraBase& camera) const
 {
 	shader->SetUniform("model", transformation);
@@ -80,6 +85,11 @@ Cube::Cube()
 	}
 }
 
+Cube::~Cube()
+{
+	lol::VAOManager::GetInstance().Return(CUBE_ID);
+}
+
 Pyramid::Pyramid()
 {
 	vao = lol::VAOManager::GetInstance().Get(PYRAMID_ID);
@@ -110,4 +120,9 @@ Pyramid::Pyramid()
 		vao = std::make_shared<lol::VertexArray>(vbo, ebo);
 		lol::VAOManager::GetInstance().Register(PYRAMID_ID, vao);
 	}
+}
+
+Pyramid::~Pyramid()
+{
+	lol::VAOManager::GetInstance().Return(PYRAMID_ID);
 }
