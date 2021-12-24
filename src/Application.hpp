@@ -2,7 +2,7 @@
 
 #include <string>
 #include "OrbitingCamera.hpp"
-#include "Plot3D.hpp"
+#include "Shapes.hpp"
 
 struct GLFWwindow;
 
@@ -45,5 +45,5 @@ private:
 	float pitch, yaw;
 
 	glm::vec3 cubeOrientation, cubePosition, cubeScale;
-	Plot3D* plot;
+	std::vector<Shape*> shapes;
 };

@@ -19,8 +19,8 @@ Application::~Application()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	if (plot != nullptr)
-		delete plot;
+	for (Shape* shape : shapes)
+		delete shape;
 
 	if (window != nullptr) 
 	{
@@ -121,16 +121,23 @@ void Application::Init(int width, int height, const std::string& title)
 
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
+	camera.Update(100.0f, aspectRatio, 0.01f, 100.0f);
 	pitch = camera.GetAngles().x;
 	yaw = camera.GetAngles().y;
 
-	plot = new Plot3D({ -glm::two_pi<float>(), -glm::two_pi<float>(), -1.5f, glm::two_pi<float>(), glm::two_pi<float>(), 1.5f }, 0.5f, 0.1f,
-		[](float x, float y)
-		{
-			return (cos(x) + cos(y)) * 0.5f;
-			// return cos(x);
-		}
-		);
+	Shape* shape = new Cube();
+	shape->Move(glm::vec3(0.0f, -2.0f, 0.0f));
+	shape->Rotate(glm::vec3(1.0f, 1.0f, 1.0f), 60);
+	// shapes.push_back(shape);
+
+	shape = new Cube();
+	shape->Move(glm::vec3(0.0f, 2.0f, 0.0f));
+	shape->Rotate(glm::vec3(0.5f, 1.0f, 1.2f), 60);
+	shapes.push_back(shape);
+
+	shape = new Pyramid();
+	shape->Move(glm::vec3(-2.0f, 0.0f, 0.0f));
+	shapes.push_back(shape);		// TODO: FIX: Creating a new VAO corrupts the other one????? how?? check if all bind calls are correct
 
 	cubePosition = glm::vec3(0.0f);
 	cubeOrientation = glm::vec3(0.0f);
@@ -150,9 +157,9 @@ void Application::Launch()
 	{
 		glfwPollEvents();
 
-		plot->SetPosition(cubePosition);
-		plot->SetRotation(cubeOrientation);
-		plot->SetScale(cubeScale);
+		// plot->SetPosition(cubePosition);
+		// plot->SetRotation(cubeOrientation);
+		// plot->SetScale(cubeScale);
 
 		camera.SetPosition(pitch, yaw);
 
@@ -163,7 +170,8 @@ void Application::Launch()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		plot->Draw(camera);
+		for (Shape* shape : shapes)
+			camera.Draw(*shape);
 
 		ImGui::Begin("Debug");
 

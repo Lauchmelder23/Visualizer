@@ -1,6 +1,6 @@
 add_executable(visualizer
 	"main.cpp" "Application.cpp" 
-   "Plot3D.cpp" "OrbitingCamera.cpp"
+    "OrbitingCamera.cpp" "Shape.cpp"
 )
 
 target_sources(visualizer PUBLIC 
