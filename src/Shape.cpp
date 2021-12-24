@@ -2,7 +2,7 @@
 
 #include "Util.hpp"
 
-Shape::Shape()
+Shape::Shape(const std::shared_ptr<lol::Texture>& texture)
 {
 	shader = lol::ShaderManager::GetInstance().Get(SHAPE_ID);
 	if (shader == nullptr)
@@ -12,13 +12,17 @@ Shape::Shape()
 				#version 460 core
 	
 				layout (location = 0) in vec3 pos;
-				
+				layout (location = 1) in vec2 uv;				
+
+				out vec2 UVcoord;
+
 				uniform mat4 model;
 				uniform mat4 view;
 				uniform mat4 projection;
 
 				void main()
 				{
+					UVcoord = uv;
 					gl_Position = projection * view * model * vec4(pos, 1.0f);
 				}
 			)",
@@ -26,16 +30,22 @@ Shape::Shape()
 				#version 460 core
 	
 				out vec4 FragColor;
+
+				in vec2 UVcoord;
+
+				uniform sampler2D shapeTexture;
 				
 				void main()
 				{
-					FragColor = vec4(1.0f);
+					FragColor = texture(shapeTexture, UVcoord);
 				}
 			)"
 			);
 
 		lol::ShaderManager::GetInstance().Register(SHAPE_ID, shader);
 	}
+
+	this->texture = texture;
 }
 
 Shape::~Shape()
@@ -45,29 +55,37 @@ Shape::~Shape()
 
 void Shape::PreRender(const lol::CameraBase& camera) const
 {
+	texture->Bind();
+
 	shader->SetUniform("model", transformation);
 	shader->SetUniform("view", camera.GetView());
 	shader->SetUniform("projection", camera.GetProjection());
 }
 
-Cube::Cube()
+Cube::Cube(const std::shared_ptr<lol::Texture>& texture) :
+	Shape(texture)
 {
 	vao = lol::VAOManager::GetInstance().Get(CUBE_ID);
 	if (vao == nullptr)
 	{
-		std::shared_ptr<lol::VertexBuffer> vbo = std::make_shared<lol::VertexBuffer>(8 * 3,
+		std::shared_ptr<lol::VertexBuffer> vbo = std::make_shared<lol::VertexBuffer>(8 * (3 + 2),
 			std::vector<float> {
-				-1.0f, -1.0f, -1.0f,
-				 1.0f, -1.0f, -1.0f,
-				 1.0f,  1.0f, -1.0f,
-				-1.0f,  1.0f, -1.0f,
-				-1.0f, -1.0f,  1.0f,
-				 1.0f, -1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,
-				-1.0f,  1.0f,  1.0f
+				-1.0f, -1.0f, -1.0f,	0.0f, 0.0f,
+				 1.0f, -1.0f, -1.0f,	1.0f, 0.0f,
+				 1.0f,  1.0f, -1.0f,	1.0f, 1.0f,
+				-1.0f,  1.0f, -1.0f,	0.0f, 1.0f,
+				-1.0f, -1.0f,  1.0f,	0.0f, 0.0f,
+				 1.0f, -1.0f,  1.0f,	1.0f, 0.0f,
+				 1.0f,  1.0f,  1.0f,	1.0f, 1.0f,
+				-1.0f,  1.0f,  1.0f,	0.0f, 1.0f,
 			}
 		);
-		vbo->SetLayout({{lol::Type::Float, 3, false}});
+		vbo->SetLayout(
+			{
+				{lol::Type::Float, 3, false},
+				{lol::Type::Float, 2, false}
+			}
+		);
 
 		std::shared_ptr<lol::ElementBuffer> ebo = std::make_shared<lol::ElementBuffer>(6 * 3 * 2,
 			std::vector<unsigned int> {
@@ -90,21 +108,27 @@ Cube::~Cube()
 	lol::VAOManager::GetInstance().Return(CUBE_ID);
 }
 
-Pyramid::Pyramid()
+Pyramid::Pyramid(const std::shared_ptr<lol::Texture>& texture) :
+	Shape(texture)
 {
 	vao = lol::VAOManager::GetInstance().Get(PYRAMID_ID);
 	if (vao == nullptr)
 	{
-		std::shared_ptr<lol::VertexBuffer> vbo = std::make_shared<lol::VertexBuffer>(5 * 3,
+		std::shared_ptr<lol::VertexBuffer> vbo = std::make_shared<lol::VertexBuffer>(5 * (3 + 2),
 			std::vector<float> {
-				-1.0f, -0.86f, 1.0f,
-				1.0f, -0.86f, 1.0f,
-				-1.0f, -0.86f, -1.0f,
-				1.0f, -0.86f, -1.0f,
-				0.0f, 0.86f, 0.0f,
+				-1.0f, -0.86f, 1.0f,		0.0f, 0.0f,	
+				1.0f, -0.86f, 1.0f,			1.0f, 0.0f,
+				-1.0f, -0.86f, -1.0f,		0.0f, 1.0f,
+				1.0f, -0.86f, -1.0f,		1.0f, 0.0f,
+				0.0f, 0.86f, 0.0f,			0.5f, 1.0f
 		}
 		);
-		vbo->SetLayout({ {lol::Type::Float, 3, false} });
+		vbo->SetLayout(
+			{
+				{lol::Type::Float, 3, false},
+				{lol::Type::Float, 2, false}
+			}
+		);
 
 		std::shared_ptr<lol::ElementBuffer> ebo = std::make_shared<lol::ElementBuffer>(18,
 			std::vector<unsigned int> {

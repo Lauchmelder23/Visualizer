@@ -132,22 +132,25 @@ void Application::Init(int width, int height, const std::string& title)
 	pitch = camera.GetAngles().x;
 	yaw = camera.GetAngles().y;
 
-	Shape* shape = new Cube();
+	lol::Image img("assets/puh.jpg");
+	texture = std::make_shared<lol::Texture>(img);
+
+	Shape* shape = new Cube(texture);
 	shape->Move(glm::vec3(0.0f, -2.0f, 0.0f));
 	shape->Rotate(glm::vec3(1.0f, 1.0f, 1.0f), 60);
 	shapes.push_back(shape);
 
-	shape = new Cube();
+	shape = new Cube(texture);
 	shape->Move(glm::vec3(0.0f, 2.0f, 0.0f));
 	shape->Rotate(glm::vec3(0.5f, 1.0f, 1.2f), 60);
 	shapes.push_back(shape);
 
-	shape = new Pyramid();
+	shape = new Pyramid(texture);
 	shape->Move(glm::vec3(0.0f, 0.0f, 3.0f));
 	shape->Rotate(glm::vec3(1.0f, 0.0f, 0.0f), -90);
 	shapes.push_back(shape);
 
-	shape = new Pyramid();
+	shape = new Pyramid(texture);
 	shape->Move(glm::vec3(0.0f, 0.0f, -3.0f));
 	shape->Rotate(glm::vec3(1.0f, 0.3f, 1.2f), 120);
 	shapes.push_back(shape);
@@ -199,6 +202,11 @@ void Application::Launch()
 		{
 			ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f);
 			ImGui::SliderFloat("Pitch", &pitch, 1.0f, 179.0f);
+		}
+
+		if (ImGui::CollapsingHeader("Texture"))
+		{
+			ImGui::Image((void*)texture->GetID(), ImVec2(67 * 3, 72 * 3));
 		}
 
 		ImGui::End();

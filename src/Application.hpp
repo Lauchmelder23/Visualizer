@@ -47,4 +47,5 @@ private:
 
 	glm::vec3 cubeOrientation, cubePosition, cubeScale;
 	std::vector<Shape*> shapes;
+	std::shared_ptr<lol::Texture> texture;
 };
