@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include <iostream>
 #include <stdexcept>
 #include <sstream>
 
@@ -128,7 +129,7 @@ void Application::Init(int width, int height, const std::string& title)
 	Shape* shape = new Cube();
 	shape->Move(glm::vec3(0.0f, -2.0f, 0.0f));
 	shape->Rotate(glm::vec3(1.0f, 1.0f, 1.0f), 60);
-	// shapes.push_back(shape);
+	shapes.push_back(shape);
 
 	shape = new Cube();
 	shape->Move(glm::vec3(0.0f, 2.0f, 0.0f));
@@ -136,8 +137,14 @@ void Application::Init(int width, int height, const std::string& title)
 	shapes.push_back(shape);
 
 	shape = new Pyramid();
-	shape->Move(glm::vec3(-2.0f, 0.0f, 0.0f));
-	shapes.push_back(shape);		// TODO: FIX: Creating a new VAO corrupts the other one????? how?? check if all bind calls are correct
+	shape->Move(glm::vec3(0.0f, 0.0f, 3.0f));
+	shape->Rotate(glm::vec3(1.0f, 0.0f, 0.0f), -90);
+	shapes.push_back(shape);
+
+	shape = new Pyramid();
+	shape->Move(glm::vec3(0.0f, 0.0f, -3.0f));
+	shape->Rotate(glm::vec3(1.0f, 0.3f, 1.2f), 120);
+	shapes.push_back(shape);
 
 	cubePosition = glm::vec3(0.0f);
 	cubeOrientation = glm::vec3(0.0f);
@@ -175,12 +182,12 @@ void Application::Launch()
 
 		ImGui::Begin("Debug");
 
-		if (ImGui::CollapsingHeader("Plot"))
+		/*if (ImGui::CollapsingHeader("Plot"))
 		{
 			ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
 			ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), -glm::pi<float>(), glm::pi<float>());
 			ImGui::SliderFloat3("Scale", &(cubeScale[0]), 0.0f, 2.0f);
-		}
+		}*/
 
 		if (ImGui::CollapsingHeader("Camera"))
 		{
