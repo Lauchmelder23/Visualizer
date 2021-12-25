@@ -67,11 +67,11 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 				uniform mat4 projection;
 				uniform float offset;
 
-				uniform sampler2DShadow heightmap;
+				uniform sampler2D heightmap;
 
 				void main()
 				{
-					height = texture(heightmap, vec3(texCoord.x + offset, texCoord.y, 0.0f));
+					height = texture(heightmap, vec2(texCoord.x + offset, texCoord.y)).x;
 					gl_Position = projection * view * vec4(position.x, 2.0f * height, position.y, 1.0f);
 				}
 			)",
@@ -93,7 +93,7 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 	}
 
 	// Generate image
-	image = lol::Image(subdivisions.x, subdivisions.y, lol::PixelFormat::DepthComponent, lol::PixelType::Float);
+	image = lol::Image(subdivisions.x, subdivisions.y, lol::PixelFormat::R, lol::PixelType::Float);
 }
 
 Topology::~Topology()
@@ -119,5 +119,5 @@ void Topology::MakeTexture()
 	if (texture != nullptr)
 		delete texture;
 
-	texture = new lol::Texture(image, lol::TextureFormat::DepthComponent);
+	texture = new lol::Texture(image, lol::TextureFormat::R32F);
 }

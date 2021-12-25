@@ -27,6 +27,13 @@ void OrbitingCamera::Tilt(float amount)
 	CalculateMatrix();
 }
 
+void OrbitingCamera::Zoom(float amount)
+{
+	distance += amount;
+	if (amount <= 0.0f)
+		distance = amount;
+}
+
 void OrbitingCamera::CalculateMatrix()
 {
 	glm::vec3 position = distance * glm::vec3(

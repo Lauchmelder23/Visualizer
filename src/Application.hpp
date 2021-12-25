@@ -43,7 +43,7 @@ private:
 	WindowData data;
 
 	OrbitingCamera camera;
-	float pitch, yaw;
+	float pitch, yaw, distance;
 
 	Topology* topology;
 };

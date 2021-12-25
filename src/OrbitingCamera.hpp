@@ -8,10 +8,11 @@ public:
 	OrbitingCamera() {}
 	OrbitingCamera(const glm::vec3& target, float distance, const glm::vec2& verticalRange = glm::vec2(1.0f, 179.0f));
 
-	inline void SetPosition(float pitch, float yaw)
+	inline void SetPosition(float pitch, float yaw, float distance)
 	{
 		this->pitch = pitch;
 		this->yaw = yaw;
+		this->distance = distance;
 
 		CalculateMatrix();
 	}
@@ -23,6 +24,7 @@ public:
 
 	void Pan(float amount);
 	void Tilt(float amount);
+	void Zoom(float amount);
 
 private:
 	void CalculateMatrix();

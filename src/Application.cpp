@@ -128,8 +128,9 @@ void Application::Init(int width, int height, const std::string& title)
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
 	camera.Update(100.0f, aspectRatio, 0.01f, 100.0f);
-	pitch = -50.0f;
-	yaw = 0.0f;
+	pitch = 45.0f;
+	yaw = 90.0f;
+	distance = 6.0f;
 
 	data.camera = &camera;
 
@@ -141,7 +142,7 @@ void Application::Init(int width, int height, const std::string& title)
 	{
 		for (unsigned int x = 0; x < size.x; x++)
 		{
-			pixels[y * size.x + x] = 0.5f + (cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) + cos(y * 0.1f)) * 0.25f;
+			pixels[y * size.x + x] = 0.5f + (cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) - cos(y * glm::pi<float>() / ((float)size.y * 0.5f))) * 0.5f;
 		}
 	}
 
@@ -159,7 +160,7 @@ void Application::Launch()
 	{
 		glfwPollEvents();
 	
-		camera.SetPosition(pitch, yaw);
+		camera.SetPosition(pitch, yaw, distance);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -176,6 +177,7 @@ void Application::Launch()
 		{
 			ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f);
 			ImGui::SliderFloat("Pitch", &pitch, 1.0f, 179.0f);
+			ImGui::SliderFloat("Distance", &distance, 1.0f, 14.0f);
 		}
 
 		ImGui::End();
