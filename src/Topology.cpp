@@ -21,8 +21,8 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 
 			vertices.push_back(xCoord);
 			vertices.push_back(yCoord);
-			vertices.push_back(Map(glm::vec2(0, subdivisions.x), glm::vec2(0.0f, 1.0f), x));
-			vertices.push_back(Map(glm::vec2(0, subdivisions.y), glm::vec2(0.0f, 1.0f), y));
+			vertices.push_back(Map(glm::vec2(-1, subdivisions.x + 1), glm::vec2(0.0f, 1.0f), x));
+			vertices.push_back(Map(glm::vec2(-1, subdivisions.y + 1), glm::vec2(0.0f, 1.0f), y));
 
 			if (y > 0 && x > 0)
 			{
@@ -65,12 +65,13 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 
 				uniform mat4 view;
 				uniform mat4 projection;
+				uniform float offset;
 
 				uniform sampler2DShadow heightmap;
 
 				void main()
 				{
-					height = texture(heightmap, vec3(texCoord, 0.0f));
+					height = texture(heightmap, vec3(texCoord.x + offset, texCoord.y, 0.0f));
 					gl_Position = projection * view * vec4(position.x, 2.0f * height, position.y, 1.0f);
 				}
 			)",
@@ -101,13 +102,16 @@ Topology::~Topology()
 		delete texture;
 }
 
-void Topology::PreRender(const lol::CameraBase& camera) const
+void Topology::PreRender(const lol::CameraBase& camera) 
 {
 	if(texture != nullptr)
 		texture->Bind();
 
 	shader->SetUniform("view", camera.GetView());
 	shader->SetUniform("projection", camera.GetProjection());
+	shader->SetUniform("offset", offset);
+
+	offset += 0.01f;
 }
 
 void Topology::MakeTexture()

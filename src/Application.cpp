@@ -133,7 +133,7 @@ void Application::Init(int width, int height, const std::string& title)
 
 	data.camera = &camera;
 
-	topology = new Topology(glm::vec2(7.5f), glm::uvec2(100));
+	topology = new Topology(glm::vec2(15.0f, 7.5f), glm::uvec2(200, 100));
 	glm::uvec2 size = topology->GetSize();
 
 	float* pixels = topology->GetTopology();
@@ -141,7 +141,7 @@ void Application::Init(int width, int height, const std::string& title)
 	{
 		for (unsigned int x = 0; x < size.x; x++)
 		{
-			pixels[y * size.x + x] = 0.5f + (cos(x * 0.1f) + cos(y * 0.1f)) * 0.25f;
+			pixels[y * size.x + x] = 0.5f + (cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) + cos(y * 0.1f)) * 0.25f;
 		}
 	}
 

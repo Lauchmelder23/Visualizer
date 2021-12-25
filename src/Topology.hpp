@@ -13,7 +13,7 @@ public:
 	Topology(const glm::vec2& size, const glm::uvec2& subdivision);
 	~Topology();
 
-	void PreRender(const lol::CameraBase& camera) const override;
+	void PreRender(const lol::CameraBase& camera) override;
 
 	inline float* GetTopology() const { return (float*)image.GetPixels(); };
 	inline const glm::uvec2& GetSize() const { return image.GetDimensions(); };
@@ -22,4 +22,6 @@ public:
 private:
 	lol::Image image;
 	lol::Texture* texture;
+
+	float offset = 0.0f;
 };
