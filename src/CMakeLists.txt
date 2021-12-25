@@ -1,7 +1,7 @@
 add_executable(visualizer
 	"main.cpp" "Application.cpp" 
-    "OrbitingCamera.cpp" "Shape.cpp"
-)
+    "OrbitingCamera.cpp" 
+ "Topology.cpp")
 
 target_sources(visualizer PUBLIC 
 	${VENDOR_DIR}/imgui/backends/imgui_impl_opengl3.cpp
@@ -22,8 +22,4 @@ target_include_directories(visualizer PRIVATE
 target_link_libraries(visualizer PRIVATE 
 	${GLFW3_LIBRARIES} 
 	lol
-)
-
-add_custom_command(TARGET visualizer POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets $<TARGET_FILE_DIR:visualizer>/assets
 )

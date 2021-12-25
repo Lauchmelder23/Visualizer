@@ -2,7 +2,7 @@
 
 #include <string>
 #include "OrbitingCamera.hpp"
-#include "Shapes.hpp"
+#include "Topology.hpp"
 
 struct GLFWwindow;
 
@@ -45,7 +45,5 @@ private:
 	OrbitingCamera camera;
 	float pitch, yaw;
 
-	glm::vec3 cubeOrientation, cubePosition, cubeScale;
-	std::vector<Shape*> shapes;
-	std::shared_ptr<lol::Texture> texture;
+	Topology* topology;
 };

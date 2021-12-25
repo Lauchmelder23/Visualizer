@@ -26,11 +26,10 @@ void Application::Quit()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	for (Shape* shape : shapes)
-		delete shape;
-
 	if (window != nullptr)
 	{
+		delete topology;
+
 		glfwDestroyWindow(window);
 		window = nullptr;
 	}
@@ -129,37 +128,24 @@ void Application::Init(int width, int height, const std::string& title)
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
 	camera.Update(100.0f, aspectRatio, 0.01f, 100.0f);
-	pitch = camera.GetAngles().x;
-	yaw = camera.GetAngles().y;
-
-	lol::Image img("assets/puh.jpg");
-	texture = std::make_shared<lol::Texture>(img);
-
-	Shape* shape = new Cube(texture);
-	shape->Move(glm::vec3(0.0f, -2.0f, 0.0f));
-	shape->Rotate(glm::vec3(1.0f, 1.0f, 1.0f), 60);
-	shapes.push_back(shape);
-
-	shape = new Cube(texture);
-	shape->Move(glm::vec3(0.0f, 2.0f, 0.0f));
-	shape->Rotate(glm::vec3(0.5f, 1.0f, 1.2f), 60);
-	shapes.push_back(shape);
-
-	shape = new Pyramid(texture);
-	shape->Move(glm::vec3(0.0f, 0.0f, 3.0f));
-	shape->Rotate(glm::vec3(1.0f, 0.0f, 0.0f), -90);
-	shapes.push_back(shape);
-
-	shape = new Pyramid(texture);
-	shape->Move(glm::vec3(0.0f, 0.0f, -3.0f));
-	shape->Rotate(glm::vec3(1.0f, 0.3f, 1.2f), 120);
-	shapes.push_back(shape);
-
-	cubePosition = glm::vec3(0.0f);
-	cubeOrientation = glm::vec3(0.0f);
-	cubeScale = glm::vec3(1.0f);
+	pitch = -50.0f;
+	yaw = 0.0f;
 
 	data.camera = &camera;
+
+	topology = new Topology(glm::vec2(7.5f), glm::uvec2(100));
+	glm::uvec2 size = topology->GetSize();
+
+	float* pixels = topology->GetTopology();
+	for (unsigned int y = 0; y < size.y; y++)
+	{
+		for (unsigned int x = 0; x < size.x; x++)
+		{
+			pixels[y * size.x + x] = 0.5f + (cos(x * 0.1f) + cos(y * 0.1f)) * 0.25f;
+		}
+	}
+
+	topology->MakeTexture();
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -172,41 +158,24 @@ void Application::Launch()
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
-
-		// plot->SetPosition(cubePosition);
-		// plot->SetRotation(cubeOrientation);
-		// plot->SetScale(cubeScale);
-
+	
 		camera.SetPosition(pitch, yaw);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		camera.Draw(*topology);
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		for (Shape* shape : shapes)
-			camera.Draw(*shape);
-
 		ImGui::Begin("Debug");
-
-		/*if (ImGui::CollapsingHeader("Plot"))
-		{
-			ImGui::SliderFloat3("Position", &(cubePosition[0]), -2.0f, 2.0f);
-			ImGui::SliderFloat3("Orientation", &(cubeOrientation[0]), -glm::pi<float>(), glm::pi<float>());
-			ImGui::SliderFloat3("Scale", &(cubeScale[0]), 0.0f, 2.0f);
-		}*/
 
 		if (ImGui::CollapsingHeader("Camera"))
 		{
 			ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f);
 			ImGui::SliderFloat("Pitch", &pitch, 1.0f, 179.0f);
-		}
-
-		if (ImGui::CollapsingHeader("Texture"))
-		{
-			ImGui::Image((void*)texture->GetID(), ImVec2(67 * 3, 72 * 3));
 		}
 
 		ImGui::End();
