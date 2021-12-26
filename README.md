@@ -16,8 +16,8 @@ cmake ..
 
 Finally, to build the project do the following
 
-## Linux
+### Linux
 Run `make`
 
-## Windows
+### Windows
 CMake generated project files in the `build` directory which you can open in an IDE and build there.
