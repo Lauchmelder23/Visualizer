@@ -16,7 +16,8 @@ public:
 	void PreRender(const lol::CameraBase& camera) override;
 
 	inline void SetHeightMapping(bool enable) { heightFactor = enable ? 2.0f : 0.0f; }
-	inline void SetColorMapping(bool enable) { colorFactor = enable ? 1.0f : 0.0f; }
+	inline void SetColorMapping(bool enable) { renderColor = enable; }
+	inline void Scroll(bool enable) { scroll = enable; }
 
 	inline float* GetTopology() const { return (float*)image.GetPixels(); };
 	inline const glm::uvec2& GetSize() const { return image.GetDimensions(); };
@@ -24,9 +25,12 @@ public:
 
 private:
 	lol::Image image;
-	lol::Texture* texture;
+	lol::Texture2D* texture;
+	std::shared_ptr<lol::Texture1D> colormap;
 
 	float offset = 0.0f;
 	float heightFactor = 2.0f;
-	float colorFactor = 1.0f;
+	bool renderColor = true;
+	bool scroll = false;
+	glm::vec2 range;
 };

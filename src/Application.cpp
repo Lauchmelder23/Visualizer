@@ -95,8 +95,7 @@ void Application::Init(int width, int height, const std::string& title)
 		{
 			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
-			float aspectRatio = (float)width / (float)height;
-			data->camera->Update(100.0f, aspectRatio, 0.01f, 100.0f);
+			data->aspectRatio = (float)width / (float)height;
 
 			glViewport(0, 0, width, height);
 		}
@@ -127,12 +126,13 @@ void Application::Init(int width, int height, const std::string& title)
 
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
-	camera.Update(100.0f, aspectRatio, 0.01f, 100.0f);
+	camera.SetPerspective(100.0f, aspectRatio, 0.01f, 100.0f);
 	pitch = 45.0f;
 	yaw = 90.0f;
 	distance = 6.0f;
 
 	data.camera = &camera;
+	data.aspectRatio = (float)width / (float)height;
 
 	topology = new Topology(glm::vec2(15.0f, 7.5f), glm::uvec2(200, 100));
 	glm::uvec2 size = topology->GetSize();
@@ -142,7 +142,7 @@ void Application::Init(int width, int height, const std::string& title)
 	{
 		for (unsigned int x = 0; x < size.x; x++)
 		{
-			pixels[y * size.x + x] = cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) - y / (float)size.y;
+			pixels[y * size.x + x] = cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) + 2.0f * (y / (float)size.y * y / (float)size.y) - 2.0f;
 		}
 	}
 
@@ -164,6 +164,12 @@ void Application::Launch()
 
 		topology->SetHeightMapping(enableHeightMap);
 		topology->SetColorMapping(enableColorMap);
+		topology->Scroll(enableScroll);
+
+		if(orthogonal)
+			camera.SetOrthogonal(-width / 2.0f * data.aspectRatio, width / 2.0f * data.aspectRatio, -width / 2.0, width / 2.0f, -1.0f, 100.0f);
+		else
+			camera.SetPerspective(fov, data.aspectRatio, 0.01f, 100.0f);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -181,12 +187,27 @@ void Application::Launch()
 			ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f);
 			ImGui::SliderFloat("Pitch", &pitch, 1.0f, 179.0f);
 			ImGui::SliderFloat("Distance", &distance, 1.0f, 14.0f);
+
+			ImGui::Checkbox("Orthogonal", &orthogonal);
+
+			if(ImGui::TreeNode("Perspective Settings"))
+			{
+				ImGui::SliderFloat("FOV", &fov, 30.0f, 110.0f);
+				ImGui::TreePop();
+			}
+
+			if(ImGui::TreeNode("Orthogonal Settings"))
+			{
+				ImGui::SliderFloat("Width", &width, 5.0f, 50.0f);
+				ImGui::TreePop();
+			}
 		}
 
 		if(ImGui::CollapsingHeader("Topology"))
 		{
 			ImGui::Checkbox("Heightmap", &enableHeightMap);
 			ImGui::Checkbox("Colormap", &enableColorMap);
+			ImGui::Checkbox("Scrolling", &enableScroll);
 		}
 
 		ImGui::End();

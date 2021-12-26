@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Util.hpp"
+#include "Colormaps.hpp"
 
 Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 	texture(nullptr)
@@ -83,9 +84,22 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 
 				out vec4 FragColor;
 
+				uniform bool renderColormap;
+				uniform vec2 range;
+				uniform sampler1D colormap;
+
+				float normalize(float val)
+				{
+					return (val - range.x) / (range.y - range.x);
+				}
+
 				void main()
 				{
-					FragColor = vec4(1.0f - height, 0.0f, height, 1.0f);
+					vec4 color = vec4(1.0f);
+					if(renderColormap)
+						color = texture(colormap, normalize(height));
+
+					FragColor = color;
 				}
 			)"
 		);
@@ -95,10 +109,30 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 
 	// Generate image
 	image = lol::Image(subdivisions.x, subdivisions.y, lol::PixelFormat::R, lol::PixelType::Float);
+
+	// Generate colormap
+	colormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(MAGMA_ID);
+	if(colormap == nullptr)
+	{
+		colormap = std::make_shared<lol::Texture1D>(
+			magma.size() / 3,
+			magma.data(),
+			lol::PixelFormat::RGB,
+			lol::PixelType::Float,
+			lol::TextureFormat::RGB32F
+		);
+
+		colormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
+
+		lol::ObjectManager<lol::Texture1D>::GetInstance().Register(MAGMA_ID, colormap);
+	}
 }
 
 Topology::~Topology()
 {
+	lol::ShaderManager::GetInstance().Return(TOPOLOGY_ID);
+	lol::ObjectManager<lol::Texture1D>::GetInstance().Return(MAGMA_ID);
+
 	if (texture != nullptr)
 		delete texture;
 }
@@ -108,20 +142,34 @@ void Topology::PreRender(const lol::CameraBase& camera)
 	if(texture != nullptr)
 		texture->Bind();
 
+	colormap->Bind();
+
 	shader->SetUniform("view", camera.GetView());
 	shader->SetUniform("projection", camera.GetProjection());
 	shader->SetUniform("offset", offset);
 
 	shader->SetUniform("heightFactor", heightFactor);
-	shader->SetUniform("colorFactor", colorFactor);
+	shader->SetUniform("range", range);
+	shader->SetUniform("renderColormap", renderColor);
 
-	offset += 0.01f;
+	offset += 0.01f * scroll;
 }
 
 void Topology::MakeTexture()
 {
+	// Calculate range (min, max values) of topology
+	float* pixels = (float*)image.GetPixels();
+
+	range = glm::vec2(pixels[0]);
+	unsigned int size = image.GetDimensions().x * image.GetDimensions().y;
+	for (unsigned int i = 1; i < size; i++)
+	{
+		range.x = std::min(pixels[i], range.x);
+		range.y = std::max(pixels[i], range.y);
+	}
+
 	if (texture != nullptr)
 		delete texture;
 
-	texture = new lol::Texture(image, lol::TextureFormat::R32F);
+	texture = new lol::Texture2D(image, lol::TextureFormat::R32F);
 }

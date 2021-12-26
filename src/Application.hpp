@@ -8,7 +8,8 @@ struct GLFWwindow;
 
 struct WindowData
 {
-	lol::Camera* camera;
+	OrbitingCamera* camera;
+	float aspectRatio;
 };
 
 class Application
@@ -44,9 +45,14 @@ private:
 
 	OrbitingCamera camera;
 	float pitch, yaw, distance;
+	bool orthogonal = false;
+	float fov = 100.0f;
+	float width = 10.0f;
 
 	bool enableHeightMap = true;
 	bool enableColorMap = true;
+	bool enableScroll = false;
+	
 
 	Topology* topology;
 };

@@ -44,3 +44,13 @@ void OrbitingCamera::CalculateMatrix()
 
 	transformation = glm::lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
 }
+
+void OrbitingCamera::SetPerspective(float fov, float aspectRatio, float zNear, float zFar)
+{
+	projection = glm::perspective(glm::radians(fov), aspectRatio, zNear, zFar);
+}
+
+void OrbitingCamera::SetOrthogonal(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+	projection = glm::ortho(left, right, bottom, top, zNear, zFar);
+}
