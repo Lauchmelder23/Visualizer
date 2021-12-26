@@ -27,6 +27,9 @@ public:
 	void MakeTexture();
 
 private:
+	void RegisterColormap(const Colormap& cm);
+
+private:
 	lol::Image image;
 	lol::Texture2D* texture;
 	std::shared_ptr<lol::Texture1D> colormap;

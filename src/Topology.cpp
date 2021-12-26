@@ -111,13 +111,16 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 	image = lol::Image(subdivisions.x, subdivisions.y, lol::PixelFormat::R, lol::PixelType::Float);
 
 	// Generate colormap
+	for(const Colormap& cm : colormaps)
+		RegisterColormap(cm);
+		
 	SetColormap(colormaps[0]);
 }
 
 Topology::~Topology()
 {
-	lol::ShaderManager::GetInstance().Return(TOPOLOGY_ID);
-	lol::ObjectManager<lol::Texture1D>::GetInstance().Return(MAGMA_ID);
+	lol::ShaderManager::GetInstance().Cleanup();
+	lol::ObjectManager<lol::Texture1D>::GetInstance().Cleanup();
 
 	if (texture != nullptr)
 		delete texture;
@@ -144,9 +147,14 @@ void Topology::PreRender(const lol::CameraBase& camera)
 void Topology::SetColormap(const Colormap& cm)
 {
 	colormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(cm.id);
-	if(colormap == nullptr)
+}
+
+void Topology::RegisterColormap(const Colormap& cm)
+{
+	std::shared_ptr<lol::Texture1D> texColormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(cm.id);
+	if(texColormap == nullptr)
 	{
-		colormap = std::make_shared<lol::Texture1D>(
+		texColormap = std::make_shared<lol::Texture1D>(
 			cm.data.size() / 3,
 			cm.data.data(),
 			lol::PixelFormat::RGB,
@@ -154,9 +162,9 @@ void Topology::SetColormap(const Colormap& cm)
 			lol::TextureFormat::RGB32F
 		);
 
-		colormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
+		texColormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
 
-		lol::ObjectManager<lol::Texture1D>::GetInstance().Register(cm.id, colormap);
+		lol::ObjectManager<lol::Texture1D>::GetInstance().Register(cm.id, texColormap);
 	}
 }
 
