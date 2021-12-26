@@ -9,6 +9,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "Colormaps.hpp"
 
 #ifdef NDEBUG	
 	#define FULLSCREEN
@@ -208,6 +209,9 @@ void Application::Launch()
 			ImGui::Checkbox("Heightmap", &enableHeightMap);
 			ImGui::Checkbox("Colormap", &enableColorMap);
 			ImGui::Checkbox("Scrolling", &enableScroll);
+
+			ImGui::ListBox("Colormap", &colormap, colormapNames.data(), colormapNames.size());
+			topology->SetColormap(colormaps[colormap]);
 		}
 
 		ImGui::End();

@@ -3,6 +3,7 @@
 #include <string>
 #include "OrbitingCamera.hpp"
 #include "Topology.hpp"
+#include "Util.hpp"
 
 struct GLFWwindow;
 
@@ -52,7 +53,7 @@ private:
 	bool enableHeightMap = true;
 	bool enableColorMap = true;
 	bool enableScroll = false;
-	
+	int colormap = 0;
 
 	Topology* topology;
 };

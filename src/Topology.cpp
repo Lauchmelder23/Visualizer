@@ -111,21 +111,7 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 	image = lol::Image(subdivisions.x, subdivisions.y, lol::PixelFormat::R, lol::PixelType::Float);
 
 	// Generate colormap
-	colormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(MAGMA_ID);
-	if(colormap == nullptr)
-	{
-		colormap = std::make_shared<lol::Texture1D>(
-			magma.size() / 3,
-			magma.data(),
-			lol::PixelFormat::RGB,
-			lol::PixelType::Float,
-			lol::TextureFormat::RGB32F
-		);
-
-		colormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
-
-		lol::ObjectManager<lol::Texture1D>::GetInstance().Register(MAGMA_ID, colormap);
-	}
+	SetColormap(colormaps[0]);
 }
 
 Topology::~Topology()
@@ -153,6 +139,25 @@ void Topology::PreRender(const lol::CameraBase& camera)
 	shader->SetUniform("renderColormap", renderColor);
 
 	offset += 0.01f * scroll;
+}
+
+void Topology::SetColormap(const Colormap& cm)
+{
+	colormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(cm.id);
+	if(colormap == nullptr)
+	{
+		colormap = std::make_shared<lol::Texture1D>(
+			cm.data.size() / 3,
+			cm.data.data(),
+			lol::PixelFormat::RGB,
+			lol::PixelType::Float,
+			lol::TextureFormat::RGB32F
+		);
+
+		colormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
+
+		lol::ObjectManager<lol::Texture1D>::GetInstance().Register(cm.id, colormap);
+	}
 }
 
 void Topology::MakeTexture()

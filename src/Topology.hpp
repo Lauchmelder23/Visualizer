@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lol/lol.hpp>
+#include "Colormaps.hpp"
 
 inline float Map(const glm::vec2& from, const glm::vec2& to, float val)
 {
@@ -21,6 +22,8 @@ public:
 
 	inline float* GetTopology() const { return (float*)image.GetPixels(); };
 	inline const glm::uvec2& GetSize() const { return image.GetDimensions(); };
+
+	void SetColormap(const Colormap& cm);
 	void MakeTexture();
 
 private:
