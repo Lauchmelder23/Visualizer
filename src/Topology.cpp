@@ -66,13 +66,14 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 				uniform mat4 view;
 				uniform mat4 projection;
 				uniform float offset;
+				uniform float heightFactor;
 
 				uniform sampler2D heightmap;
 
 				void main()
 				{
 					height = texture(heightmap, vec2(texCoord.x + offset, texCoord.y)).x;
-					gl_Position = projection * view * vec4(position.x, 2.0f * height, position.y, 1.0f);
+					gl_Position = projection * view * vec4(position.x, heightFactor * height, position.y, 1.0f);
 				}
 			)",
 			R"(
@@ -110,6 +111,9 @@ void Topology::PreRender(const lol::CameraBase& camera)
 	shader->SetUniform("view", camera.GetView());
 	shader->SetUniform("projection", camera.GetProjection());
 	shader->SetUniform("offset", offset);
+
+	shader->SetUniform("heightFactor", heightFactor);
+	shader->SetUniform("colorFactor", colorFactor);
 
 	offset += 0.01f;
 }

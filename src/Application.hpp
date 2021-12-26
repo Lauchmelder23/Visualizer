@@ -45,5 +45,8 @@ private:
 	OrbitingCamera camera;
 	float pitch, yaw, distance;
 
+	bool enableHeightMap = true;
+	bool enableColorMap = true;
+
 	Topology* topology;
 };

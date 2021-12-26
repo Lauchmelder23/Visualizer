@@ -142,7 +142,7 @@ void Application::Init(int width, int height, const std::string& title)
 	{
 		for (unsigned int x = 0; x < size.x; x++)
 		{
-			pixels[y * size.x + x] = 0.5f + (cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) - cos(y * glm::pi<float>() / ((float)size.y * 0.5f))) * 0.5f;
+			pixels[y * size.x + x] = cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) - y / (float)size.y;
 		}
 	}
 
@@ -162,6 +162,9 @@ void Application::Launch()
 	
 		camera.SetPosition(pitch, yaw, distance);
 
+		topology->SetHeightMapping(enableHeightMap);
+		topology->SetColorMapping(enableColorMap);
+
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -178,6 +181,12 @@ void Application::Launch()
 			ImGui::SliderFloat("Yaw", &yaw, 0.0f, 360.0f);
 			ImGui::SliderFloat("Pitch", &pitch, 1.0f, 179.0f);
 			ImGui::SliderFloat("Distance", &distance, 1.0f, 14.0f);
+		}
+
+		if(ImGui::CollapsingHeader("Topology"))
+		{
+			ImGui::Checkbox("Heightmap", &enableHeightMap);
+			ImGui::Checkbox("Colormap", &enableColorMap);
 		}
 
 		ImGui::End();

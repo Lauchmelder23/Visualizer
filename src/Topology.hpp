@@ -15,6 +15,9 @@ public:
 
 	void PreRender(const lol::CameraBase& camera) override;
 
+	inline void SetHeightMapping(bool enable) { heightFactor = enable ? 2.0f : 0.0f; }
+	inline void SetColorMapping(bool enable) { colorFactor = enable ? 1.0f : 0.0f; }
+
 	inline float* GetTopology() const { return (float*)image.GetPixels(); };
 	inline const glm::uvec2& GetSize() const { return image.GetDimensions(); };
 	void MakeTexture();
@@ -24,4 +27,6 @@ private:
 	lol::Texture* texture;
 
 	float offset = 0.0f;
+	float heightFactor = 2.0f;
+	float colorFactor = 1.0f;
 };
