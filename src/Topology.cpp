@@ -119,8 +119,8 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 
 Topology::~Topology()
 {
-	lol::ShaderManager::GetInstance().Cleanup();
-	lol::ObjectManager<lol::Texture1D>::GetInstance().Cleanup();
+	lol::ShaderManager::GetInstance().CleanupUnused();
+	lol::ObjectManager<lol::Texture1D>::GetInstance().CleanupUnused();
 
 	if (texture != nullptr)
 		delete texture;

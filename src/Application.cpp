@@ -31,6 +31,9 @@ void Application::Quit()
 	{
 		delete topology;
 
+		lol::ShaderManager::GetInstance().Cleanup();
+		lol::ObjectManager<lol::Texture1D>::GetInstance().Cleanup();
+
 		glfwDestroyWindow(window);
 		window = nullptr;
 	}
