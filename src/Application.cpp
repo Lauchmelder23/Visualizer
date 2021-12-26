@@ -31,8 +31,7 @@ void Application::Quit()
 	{
 		delete topology;
 
-		lol::ShaderManager::GetInstance().Cleanup();
-		lol::ObjectManager<lol::Texture1D>::GetInstance().Cleanup();
+		manager.Clear();
 
 		glfwDestroyWindow(window);
 		window = nullptr;
@@ -138,7 +137,7 @@ void Application::Init(int width, int height, const std::string& title)
 	data.camera = &camera;
 	data.aspectRatio = (float)width / (float)height;
 
-	topology = new Topology(glm::vec2(15.0f, 7.5f), glm::uvec2(200, 100));
+	topology = new Topology(manager, glm::vec2(15.0f, 7.5f), glm::uvec2(200, 100));
 	glm::uvec2 size = topology->GetSize();
 
 	float* pixels = topology->GetTopology();

@@ -5,8 +5,8 @@
 #include "Util.hpp"
 #include "Colormaps.hpp"
 
-Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
-	texture(nullptr)
+Topology::Topology(lol::ObjectManager& manager, const glm::vec2& size, const glm::uvec2& subdivisions) :
+	texture(nullptr), manager(manager)
 {
 	// Create VAO
 	vao = std::make_shared<lol::VertexArray>();
@@ -52,10 +52,13 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 	vao->SetElementBuffer(elementBuffer);
 
 	// Set up shader
-	shader = lol::ShaderManager::GetInstance().Get(TOPOLOGY_ID);
-	if (shader == nullptr)
+	try
 	{
-		shader = std::make_shared<lol::Shader>(
+		shader = manager.Get<lol::Shader>(TOPOLOGY_ID);
+	}
+	catch(const lol::ObjectNotFoundException& ex)
+	{
+		shader = manager.Create<lol::Shader>(TOPOLOGY_ID,
 			R"(
 				#version 460 core
 
@@ -103,8 +106,6 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 				}
 			)"
 		);
-
-		lol::ShaderManager::GetInstance().Register(TOPOLOGY_ID, shader);
 	}
 
 	// Generate image
@@ -119,8 +120,7 @@ Topology::Topology(const glm::vec2& size, const glm::uvec2& subdivisions) :
 
 Topology::~Topology()
 {
-	lol::ShaderManager::GetInstance().CleanupUnused();
-	lol::ObjectManager<lol::Texture1D>::GetInstance().CleanupUnused();
+	manager.ClearUnused();
 
 	if (texture != nullptr)
 		delete texture;
@@ -146,15 +146,18 @@ void Topology::PreRender(const lol::CameraBase& camera)
 
 void Topology::SetColormap(const Colormap& cm)
 {
-	colormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(cm.id);
+	colormap = manager.Get<lol::Texture1D>(cm.id);
 }
 
 void Topology::RegisterColormap(const Colormap& cm)
 {
-	std::shared_ptr<lol::Texture1D> texColormap = lol::ObjectManager<lol::Texture1D>::GetInstance().Get(cm.id);
-	if(texColormap == nullptr)
+	try
 	{
-		texColormap = std::make_shared<lol::Texture1D>(
+		manager.Get<lol::Texture1D>(cm.id);
+	}
+	catch(const lol::ObjectNotFoundException& e)
+	{
+		std::shared_ptr<lol::Texture1D> colormap = manager.Create<lol::Texture1D>(cm.id,
 			cm.data.size() / 3,
 			cm.data.data(),
 			lol::PixelFormat::RGB,
@@ -162,9 +165,7 @@ void Topology::RegisterColormap(const Colormap& cm)
 			lol::TextureFormat::RGB32F
 		);
 
-		texColormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
-
-		lol::ObjectManager<lol::Texture1D>::GetInstance().Register(cm.id, texColormap);
+		colormap->SetWrap(lol::TextureWrap::ClampToEdge, lol::TextureWrap::Repeat);
 	}
 }
 

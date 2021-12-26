@@ -43,6 +43,7 @@ public:
 private:
 	GLFWwindow* window = nullptr;
 	WindowData data;
+	lol::ObjectManager manager;
 
 	OrbitingCamera camera;
 	float pitch, yaw, distance;

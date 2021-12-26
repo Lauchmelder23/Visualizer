@@ -11,7 +11,7 @@ inline float Map(const glm::vec2& from, const glm::vec2& to, float val)
 class Topology : public lol::Drawable
 {
 public:
-	Topology(const glm::vec2& size, const glm::uvec2& subdivision);
+	Topology(lol::ObjectManager& manager, const glm::vec2& size, const glm::uvec2& subdivision);
 	~Topology();
 
 	void PreRender(const lol::CameraBase& camera) override;
@@ -32,6 +32,8 @@ private:
 private:
 	lol::Image image;
 	lol::Texture2D* texture;
+
+	lol::ObjectManager& manager;
 	std::shared_ptr<lol::Texture1D> colormap;
 
 	float offset = 0.0f;
