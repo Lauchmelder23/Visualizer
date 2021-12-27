@@ -38,7 +38,7 @@ Topology::Topology(lol::ObjectManager& manager, const glm::vec2& size, const glm
 		}
 	}
 
-	std::shared_ptr<lol::VertexBuffer> vertexBuffer = std::make_shared<lol::VertexBuffer>(vertices.size(), vertices);
+	std::shared_ptr<lol::VertexBuffer> vertexBuffer = std::make_shared<lol::VertexBuffer>(vertices);
 	vertexBuffer->SetLayout(
 		{
 			{ lol::Type::Float, 2, false },
@@ -46,7 +46,7 @@ Topology::Topology(lol::ObjectManager& manager, const glm::vec2& size, const glm
 		}
 	);
 
-	std::shared_ptr<lol::ElementBuffer> elementBuffer = std::make_shared<lol::ElementBuffer>(indices.size(), indices);
+	std::shared_ptr<lol::ElementBuffer> elementBuffer = std::make_shared<lol::ElementBuffer>(indices);
 
 	vao->SetVertexBuffer(vertexBuffer);
 	vao->SetElementBuffer(elementBuffer);
