@@ -130,19 +130,17 @@ void Application::Init(int width, int height, const std::string& title)
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
 	camera.SetPerspective(100.0f, aspectRatio, 0.01f, 100.0f);
-	pitch = 90.0f;
-	yaw = 88.0f;
-	distance = 6.0f;
+	pitch = 65.0f;
+	yaw = 265.0f;
+	distance = 10.0f;
 
 	data.camera = &camera;
 	data.aspectRatio = (float)width / (float)height;
 
-	orthogonal = true;
-
 	topology = new ScrollingPlot(
 		manager, 
-		glm::vec2(15.0f, 1.0f), 
-		glm::uvec2(2000, 2),
+		glm::vec2(15.0f, 15.0f), 
+		glm::uvec2(500, 500),
 		glm::vec2(-1.0f, 1.0f),
 		0.001f,
 		// [](float t, float y)
@@ -156,7 +154,7 @@ void Application::Init(int width, int height, const std::string& title)
 			for(unsigned k = 1; k < 100; k++)
 			{
 				unsigned int twoK = std::pow(2, k);
-				z += twoK * sin(twoK * t) / std::pow(3, k);
+				z += twoK * sin(twoK * t) * cos(twoK * y) / std::pow(3, k);
 			}
 
 			return z;
