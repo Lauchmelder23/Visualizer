@@ -11,12 +11,13 @@ ScrollingPlot::ScrollingPlot(
     Topology(manager, size, subdivision), domain(domain), dt(temporalResolution), func(func)
 {
     // Create initial texture for t = 0
-    for(unsigned int x = 0; x < subdivision.x; x++)
+    for (unsigned int x = 0; x < subdivision.x; x++)
     {
         CalculateStrip(x);
         t += dt;
     }
 
+    range = glm::vec2(-1.0f, 1.0f);
     MakeTexture();
 }
 

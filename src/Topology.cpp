@@ -144,6 +144,19 @@ void Topology::PreRender(const lol::CameraBase& camera)
 	offset += 0.01f * scroll;
 }
 
+void Topology::CalculateRange()
+{
+	float* pixels = GetTopology();
+
+	range = glm::vec2(pixels[0]);
+	unsigned int size = image.GetDimensions().x * image.GetDimensions().y;
+	for (unsigned int i = 1; i < size; i++)
+	{
+		range.x = std::min(pixels[i], range.x);
+		range.y = std::max(pixels[i], range.y);
+	}
+}
+
 void Topology::SetColormap(const Colormap& cm)
 {
 	colormap = manager.Get<lol::Texture1D>(cm.id);
@@ -173,14 +186,6 @@ void Topology::MakeTexture()
 {
 	// Calculate range (min, max values) of topology
 	float* pixels = (float*)image.GetPixels();
-
-	range = glm::vec2(pixels[0]);
-	unsigned int size = image.GetDimensions().x * image.GetDimensions().y;
-	for (unsigned int i = 1; i < size; i++)
-	{
-		range.x = std::min(pixels[i], range.x);
-		range.y = std::max(pixels[i], range.y);
-	}
 
 	if (texture != nullptr)
 		delete texture;

@@ -23,6 +23,7 @@ public:
 	inline float* GetTopology() const { return (float*)image.GetPixels(); };
 	inline const glm::uvec2& GetSize() const { return image.GetDimensions(); };
 
+	void CalculateRange();
 	void SetColormap(const Colormap& cm);
 	void MakeTexture();
 

@@ -131,7 +131,7 @@ void Application::Init(int width, int height, const std::string& title)
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
 	camera.SetPerspective(100.0f, aspectRatio, 0.01f, 100.0f);
 	pitch = 65.0f;
-	yaw = 265.0f;
+	yaw = 85.0f;
 	distance = 10.0f;
 
 	data.camera = &camera;
