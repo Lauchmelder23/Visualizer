@@ -130,26 +130,41 @@ void Application::Init(int width, int height, const std::string& title)
 	float aspectRatio = (float)windowWidth / (float)windowHeight;
 	camera = OrbitingCamera(glm::vec3(0.0f, 0.0f, 0.0f), 6.0f);
 	camera.SetPerspective(100.0f, aspectRatio, 0.01f, 100.0f);
-	pitch = 45.0f;
-	yaw = 90.0f;
+	pitch = 90.0f;
+	yaw = 88.0f;
 	distance = 6.0f;
 
 	data.camera = &camera;
 	data.aspectRatio = (float)width / (float)height;
 
-	topology = new Topology(manager, glm::vec2(15.0f, 7.5f), glm::uvec2(200, 100));
-	glm::uvec2 size = topology->GetSize();
+	orthogonal = true;
 
-	float* pixels = topology->GetTopology();
-	for (unsigned int y = 0; y < size.y; y++)
-	{
-		for (unsigned int x = 0; x < size.x; x++)
+	topology = new ScrollingPlot(
+		manager, 
+		glm::vec2(15.0f, 1.0f), 
+		glm::uvec2(2000, 2),
+		glm::vec2(-1.0f, 1.0f),
+		0.001f,
+		// [](float t, float y)
+		// {
+		// 	return cos(t) + 0.5f * cos(2.0f * t) + 0.1f * sin(1.3f * t) + 0.3f * cos(3.5f * t) + 2.0f * (y * y) - 2.0f;
+		// }
+		[](float t, float y)
 		{
-			pixels[y * size.x + x] = cos(x * glm::two_pi<float>() / ((float)size.x * 0.5f)) + 2.0f * (y / (float)size.y * y / (float)size.y) - 2.0f;
-		}
-	}
+			// Weierstraß
+			float z = 0.0f;
+			for(unsigned k = 1; k < 100; k++)
+			{
+				unsigned int twoK = std::pow(2, k);
+				z += twoK * sin(twoK * t) / std::pow(3, k);
+			}
 
-	topology->MakeTexture();
+			return z;
+		}
+	);
+
+	colormap = 3;
+	topology->SetColormap(colormaps[colormap]);
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -167,7 +182,8 @@ void Application::Launch()
 
 		topology->SetHeightMapping(enableHeightMap);
 		topology->SetColorMapping(enableColorMap);
-		topology->Scroll(enableScroll);
+		if(enableScroll)
+			topology->StepForward(3);
 
 		if(orthogonal)
 			camera.SetOrthogonal(-width / 2.0f * data.aspectRatio, width / 2.0f * data.aspectRatio, -width / 2.0, width / 2.0f, -1.0f, 100.0f);

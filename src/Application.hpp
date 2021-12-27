@@ -2,7 +2,7 @@
 
 #include <string>
 #include "OrbitingCamera.hpp"
-#include "Topology.hpp"
+#include "ScrollingPlot.hpp"
 #include "Util.hpp"
 
 struct GLFWwindow;
@@ -56,5 +56,5 @@ private:
 	bool enableScroll = false;
 	int colormap = 0;
 
-	Topology* topology;
+	ScrollingPlot* topology;
 };

@@ -18,7 +18,7 @@ public:
 
 	inline void SetHeightMapping(bool enable) { heightFactor = enable ? 2.0f : 0.0f; }
 	inline void SetColorMapping(bool enable) { renderColor = enable; }
-	inline void Scroll(bool enable) { scroll = enable; }
+	inline virtual void Scroll(bool enable) { scroll = enable; }
 
 	inline float* GetTopology() const { return (float*)image.GetPixels(); };
 	inline const glm::uvec2& GetSize() const { return image.GetDimensions(); };
@@ -29,16 +29,18 @@ public:
 private:
 	void RegisterColormap(const Colormap& cm);
 
-private:
+protected:
 	lol::Image image;
 	lol::Texture2D* texture;
 
 	lol::ObjectManager& manager;
 	std::shared_ptr<lol::Texture1D> colormap;
+	glm::vec2 range;
 
 	float offset = 0.0f;
+	
+private:
 	float heightFactor = 2.0f;
 	bool renderColor = true;
 	bool scroll = false;
-	glm::vec2 range;
 };

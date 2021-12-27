@@ -3,6 +3,7 @@ add_executable(visualizer
     "OrbitingCamera.cpp" 
  	"Topology.cpp"
 	"Colormaps.cpp"
+	"ScrollingPlot.cpp"
 )
 
 target_sources(visualizer PUBLIC 
