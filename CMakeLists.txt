@@ -18,6 +18,14 @@ if(NOT GLFW3_FOUND)
 	set(GLFW3_LIBRARIES glfw)
 endif()
 
+find_package(SDL2)
+if(NOT SDL2_FOUND)
+	message(STATUS "Could not find SDL binaries on system, building from source instead")
+	add_subdirectory("vendor/sdl")
+
+	set(SDL2_INCLUDE_DIRS sdl_static)
+	set(SDL2_LIBRARIES sdl_static)
+endif()
 
 # Include sub-projects.
 add_subdirectory ("vendor/lol")

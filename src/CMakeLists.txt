@@ -1,9 +1,11 @@
 add_executable(visualizer
-	"main.cpp" "Application.cpp" 
+	"main.cpp" 
+	"Application.cpp" 
     "OrbitingCamera.cpp" 
  	"Topology.cpp"
 	"Colormaps.cpp"
 	"ScrollingPlot.cpp"
+	"AudioFile.cpp"
 )
 
 target_sources(visualizer PUBLIC 
@@ -18,11 +20,17 @@ target_sources(visualizer PUBLIC
 
 target_include_directories(visualizer PRIVATE 
 	${GLFW3_INCLUDE_DIRS}
+	${SDL2_INCLUDE_DIRS}
 	${VENDOR_DIR}/imgui
 	lol
 )
 
 target_link_libraries(visualizer PRIVATE 
 	${GLFW3_LIBRARIES} 
+	${SDL2_LIBRARIES}
 	lol
+)
+
+add_custom_command(TARGET visualizer POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:visualizer>/res
 )

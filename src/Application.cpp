@@ -1,14 +1,17 @@
 #include "Application.hpp"
 
 #include <iostream>
+#include <bitset>
 #include <stdexcept>
 #include <sstream>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <SDL2/SDL.h>
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+
 #include "Colormaps.hpp"
 
 #ifdef NDEBUG	
@@ -29,6 +32,7 @@ void Application::Quit()
 
 	if (window != nullptr)
 	{
+		delete file;
 		delete topology;
 
 		manager.Clear();
@@ -37,6 +41,7 @@ void Application::Quit()
 		window = nullptr;
 	}
 
+	SDL_Quit();
 	glfwTerminate();
 }
 
@@ -44,7 +49,10 @@ void Application::Init(int width, int height, const std::string& title)
 {
 	// Initialize GLFW
 	if (window == nullptr)
+	{
 		glfwInit();
+		SDL_Init(SDL_INIT_AUDIO);
+	}
 
 	int windowWidth = width, windowHeight = height;
 	GLFWmonitor* monitor = NULL;
@@ -61,6 +69,9 @@ void Application::Init(int width, int height, const std::string& title)
 	windowWidth = mode->width;
 	windowHeight = mode->height;
 #endif
+
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
 	// Create GLFW window
 	window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), monitor, NULL);
@@ -164,16 +175,32 @@ void Application::Init(int width, int height, const std::string& title)
 	colormap = 3;
 	topology->SetColormap(colormaps[colormap]);
 
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	file = new AudioFile("res/payday.wav");
+	SDL_AudioSpec specs = file->GetAudioSpec();
+	std::cout << "Channels: " << (int)specs.channels << std::endl;
+	std::cout << "Format: " << std::bitset<16>{specs.format} << std::endl;
+	std::cout << "Samples: " << specs.samples << std::endl;
+	std::cout << "Frequency: " << specs.freq << std::endl;
+	file->Normalize();
+
+	std::cout << "First 50 samples: " << std::endl;
+	for(auto it = file->begin(); it != file->begin() + 50; it++)
+		std::cout << *it << std::endl;
 
 	// glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
+
+	frameTimerStart = std::chrono::system_clock::now();
 }
 
 void Application::Launch()
 {
 	while (!glfwWindowShouldClose(window))
 	{
+		unsigned int frametime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - frameTimerStart).count();
+		frameTimerStart = std::chrono::system_clock::now();
+		float fps = 1000.0f / frametime;
+
 		glfwPollEvents();
 	
 		camera.SetPosition(pitch, yaw, distance);
@@ -198,6 +225,8 @@ void Application::Launch()
 		ImGui::NewFrame();
 
 		ImGui::Begin("Debug");
+
+		ImGui::Text("FPS: %f", fps);
 
 		if (ImGui::CollapsingHeader("Camera"))
 		{

@@ -7,3 +7,6 @@
 [submodule "vendor/lol"]
 	path = vendor/lol
 	url = git@github.com:Lauchmelder23/lol.git
+[submodule "vendor/sdl"]
+	path = vendor/sdl
+	url = git@github.com:libsdl-org/SDL.git

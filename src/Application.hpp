@@ -1,9 +1,11 @@
 #pragma once
 
 #include <string>
+#include <chrono>
+#include "Util.hpp"
 #include "OrbitingCamera.hpp"
 #include "ScrollingPlot.hpp"
-#include "Util.hpp"
+#include "AudioFile.hpp"
 
 struct GLFWwindow;
 
@@ -44,6 +46,7 @@ private:
 	GLFWwindow* window = nullptr;
 	WindowData data;
 	lol::ObjectManager manager;
+	std::chrono::system_clock::time_point frameTimerStart;
 
 	OrbitingCamera camera;
 	float pitch, yaw, distance;
@@ -57,4 +60,5 @@ private:
 	int colormap = 0;
 
 	ScrollingPlot* topology;
+	AudioFile* file;
 };
