@@ -4,8 +4,7 @@
 #include <chrono>
 #include "Util.hpp"
 #include "OrbitingCamera.hpp"
-#include "ScrollingPlot.hpp"
-#include "AudioFile.hpp"
+#include "Spectrogram.hpp"
 
 struct GLFWwindow;
 
@@ -59,6 +58,5 @@ private:
 	bool enableScroll = false;
 	int colormap = 0;
 
-	ScrollingPlot* topology;
-	AudioFile* file;
+	Spectrogram* spectrogram;
 };

@@ -6,6 +6,7 @@ add_executable(visualizer
 	"Colormaps.cpp"
 	"ScrollingPlot.cpp"
 	"AudioFile.cpp"
+	"Spectrogram.cpp"
 )
 
 target_sources(visualizer PUBLIC 

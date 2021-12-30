@@ -16,7 +16,7 @@ public:
 
 	void PreRender(const lol::CameraBase& camera) override;
 
-	inline void SetHeightMapping(bool enable) { heightFactor = enable ? 2.0f : 0.0f; }
+	inline void SetHeightMapping(bool enable) { heightFactor = enable ? 200.0f : 0.0f; }
 	inline void SetColorMapping(bool enable) { renderColor = enable; }
 	inline virtual void Scroll(bool enable) { scroll = enable; }
 
@@ -41,7 +41,7 @@ protected:
 	float offset = 0.0f;
 	
 private:
-	float heightFactor = 2.0f;
+	float heightFactor = 200.0f;
 	bool renderColor = true;
 	bool scroll = false;
 };

@@ -32,8 +32,7 @@ void Application::Quit()
 
 	if (window != nullptr)
 	{
-		delete file;
-		delete topology;
+		delete spectrogram;
 
 		manager.Clear();
 
@@ -148,44 +147,15 @@ void Application::Init(int width, int height, const std::string& title)
 	data.camera = &camera;
 	data.aspectRatio = (float)width / (float)height;
 
-	topology = new ScrollingPlot(
-		manager, 
-		glm::vec2(15.0f, 15.0f), 
-		glm::uvec2(500, 500),
-		glm::vec2(-1.0f, 1.0f),
-		0.001f,
-		// [](float t, float y)
-		// {
-		// 	return cos(t) + 0.5f * cos(2.0f * t) + 0.1f * sin(1.3f * t) + 0.3f * cos(3.5f * t) + 2.0f * (y * y) - 2.0f;
-		// }
-		[](float t, float y)
-		{
-			// Weierstraß
-			float z = 0.0f;
-			for(unsigned k = 1; k < 100; k++)
-			{
-				unsigned int twoK = std::pow(2, k);
-				z += twoK * sin(twoK * t) * cos(twoK * y) / std::pow(3, k);
-			}
-
-			return z;
-		}
+	spectrogram = new Spectrogram(
+		manager,
+		glm::vec2(5.0f, 5.0f),
+		glm::uvec2(200, 2000),
+		AudioFile("res/payday.wav")
 	);
 
 	colormap = 3;
-	topology->SetColormap(colormaps[colormap]);
-
-	file = new AudioFile("res/payday.wav");
-	SDL_AudioSpec specs = file->GetAudioSpec();
-	std::cout << "Channels: " << (int)specs.channels << std::endl;
-	std::cout << "Format: " << std::bitset<16>{specs.format} << std::endl;
-	std::cout << "Samples: " << specs.samples << std::endl;
-	std::cout << "Frequency: " << specs.freq << std::endl;
-	file->Normalize();
-
-	std::cout << "First 50 samples: " << std::endl;
-	for(auto it = file->begin(); it != file->begin() + 50; it++)
-		std::cout << *it << std::endl;
+	spectrogram->SetColormap(colormaps[colormap]);
 
 	// glEnable(GL_CULL_FACE);
 	glEnable(GL_MULTISAMPLE);
@@ -205,10 +175,10 @@ void Application::Launch()
 	
 		camera.SetPosition(pitch, yaw, distance);
 
-		topology->SetHeightMapping(enableHeightMap);
-		topology->SetColorMapping(enableColorMap);
+		spectrogram->SetHeightMapping(enableHeightMap);
+		spectrogram->SetColorMapping(enableColorMap);
 		if(enableScroll)
-			topology->StepForward(3);
+			spectrogram->Update();
 
 		if(orthogonal)
 			camera.SetOrthogonal(-width / 2.0f * data.aspectRatio, width / 2.0f * data.aspectRatio, -width / 2.0, width / 2.0f, -1.0f, 100.0f);
@@ -218,7 +188,7 @@ void Application::Launch()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		camera.Draw(*topology);
+		camera.Draw(*spectrogram);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -256,7 +226,7 @@ void Application::Launch()
 			ImGui::Checkbox("Scrolling", &enableScroll);
 
 			ImGui::ListBox("Colormap", &colormap, colormapNames.data(), colormapNames.size());
-			topology->SetColormap(colormaps[colormap]);
+			spectrogram->SetColormap(colormaps[colormap]);
 		}
 
 		ImGui::End();
